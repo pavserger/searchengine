@@ -1,55 +1,50 @@
 package main;
 
 import lombok.Data;
-import main.model.Site;
-import main.model.SiteRepository;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
-@ConfigurationProperties(prefix = "indexing-settings.sites")
+@ConfigurationProperties(prefix = "indexing-settings")
 @Component
 @Data
 public class LoadConfig {
 
-   private List <String> sites;
- //   Map <String, String> url;
- //   Map <String, String> name;
+
+   private List <SiteProps> sites;
+
 
  //   @Autowired
-    private SiteRepository siteRepository;
 
-    //SiteStorage siteStorage = new SiteStorage(siteRepository);
-
-   private  LoadConfig() {
-       /*
-       SiteConf siteConf = new SiteConf();
-       siteConf.setUrl(" - url","https://www.lenta.ru" );
-       siteConf.setName("name","Лента.ру");
-       sites.add(siteConf);
-
-        */
-
-       Site site = new Site();
-       LocalDateTime dateTime = LocalDateTime.now();
-    //   for (int i = 0; i< 20; i++) {
+ //  public List<SiteProps> getSites() {
+ //     return sites;
+ //  }
 
 
-            site.setName("Лента.ру");
-            site.setUrl("https://www.lenta.ru");
-           site.setType("INDEXED");
-           site.setStatusTime(dateTime);
-     //      siteStorage.addSite(site);
-
-   //    }
+   @Override
+   public String toString() {
+      return "{" + this.getSites() + "}";
    }
+}
 
 
+class SiteProps {
+   private String url;
+   private String name;
 }
 
 
 
-//public class Config {
-//}
+/*
+indexing-settings:
+        sites:
+        - url: https://www.lenta.ru
+        name: Лента.ру
+        - url: https://www.skillbox.ru
+        name: Skillbox
+        - url: https://www.playback.ru
+        name: PlayBack.Ru
+
+*/
+
