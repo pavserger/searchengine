@@ -17,9 +17,9 @@ public class LoadConfig {
 
  //   @Autowired
 
- //  public List<SiteProps> getSites() {
- //     return sites;
- //  }
+   public List<SiteProps> getSites() {
+      return sites;
+   }
 
 
    @Override
@@ -28,7 +28,8 @@ public class LoadConfig {
    }
 }
 
-
+@Data
+@Component
 class SiteProps {
    private String url;
    private String name;
