@@ -5,13 +5,8 @@ import com.github.tsohr.JSONArray;
 import com.github.tsohr.JSONObject;
 import main.FindMap;
 import main.model.*;
-import netscape.javascript.JSObject;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.concurrent.ForkJoinPool;
@@ -41,8 +36,11 @@ public class SiteController {
         this.pageRepository = pageRepository;
     }
 
-    @GetMapping("/init/")
+    @GetMapping("/init")
     public void init() {
+        LoadConfig config = new LoadConfig();
+        System.out.println(config.toString());
+
 
         LocalDateTime dateTime = LocalDateTime.now();
 

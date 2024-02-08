@@ -7,13 +7,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class Application {
 
-    @Autowired
-    private static LoadConfig config;
+ //   @Autowired
+ //   private static LoadConfig config;
 
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+       SpringApplication.run(Application.class, args);
 
-        System.out.println(config.getSites().toString());
+        //  System.out.println(config.getSites().toString());
     }
 
 }

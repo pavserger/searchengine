@@ -1,38 +1,49 @@
-package main;
+package main.controllers;
 
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Map;
 
 @ConfigurationProperties(prefix = "indexing-settings")
 @Component
 @Data
+//@Builder
+//@AllArgsConstructor
+//@NoArgsConstructor
 public class LoadConfig {
 
+   private Map <String,String> sites;
 
-   private List <SiteProps> sites;
-
-
- //   @Autowired
-
-   public List<SiteProps> getSites() {
-      return sites;
+   public LoadConfig() {
    }
+
+   //   @Autowired
+
+ //  public List<SiteProps> getSiteProps() {
+ //        System.out.println(sites.get(0).getName());
+ //     return getSiteProps();
+  // }
 
 
    @Override
+
    public String toString() {
-      return "{" + this.getSites() + "}";
+      return "{"+sites.toString()+ "}";
    }
 }
 
-@Data
+
 @Component
+//@ConfigurationProperties(prefix = "sites")
+@Data
 class SiteProps {
+
    private String url;
    private String name;
+
 }
 
 
