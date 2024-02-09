@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -32,10 +33,10 @@ import java.util.concurrent.ForkJoinPool;
 
 public class SiteController {
 
-    private Map<String,String> sites;
+    private HashMap<String,String> sites;
 
     private final SiteRepository siteRepository;
-    Site site = new Site();
+   // Site site = new Site();
 
 
     private PageRepository pageRepository;
@@ -59,17 +60,25 @@ public class SiteController {
     @GetMapping("/init/")
     public void init() {
 
+        Site site = new Site();
+        int i = 0;
+
         LocalDateTime dateTime = LocalDateTime.now();
 
 
-        for (Map.Entry<String, String> listSites :
-                sites.entrySet()) {
-            Site site = new Site();
-            site.setName(listSites.getKey().toString());
-            site.setUrl(listSites.getValue().toString());
-            site.setType("INDEXED");
-            site.setStatusTime(dateTime);
-            siteRepository.save(site);
+        for (HashMap.Entry<String, String> mapSites : sites.entrySet()) {
+            if (mapSites.getKey().contains("url")) {
+                if  (i > 0) site = new Site();
+                i++;
+                site.setUrl(mapSites.getValue());
+                site.setType("INDEXED");
+                site.setStatusTime(dateTime);
+
+            }
+            if (mapSites.getKey().contains("name")) {
+                site.setName(mapSites.getValue());
+                siteRepository.save(site);
+            }
 
         }
 
