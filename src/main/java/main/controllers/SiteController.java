@@ -33,7 +33,7 @@ import java.util.concurrent.ForkJoinPool;
 
 public class SiteController {
 
-    private HashMap<String,String> sites;
+    private HashMap <String,String> sites;
 
     private final SiteRepository siteRepository;
    // Site site = new Site();
@@ -46,10 +46,6 @@ public class SiteController {
  //   private LemmaRepository lemmaRepository;
  //   Lemma lemmaRec = new Lemma();
 
-
-
-
-
     // Рекомендуемый вариант внедрения зависимости:
     // внедрение зависимости в класс через конструктор
     public SiteController(SiteRepository siteRepository, PageRepository pageRepository) {
@@ -59,14 +55,16 @@ public class SiteController {
 
     @GetMapping("/init/")
     public void init() {
-
+                                            // код должен быть перенесен в "/api/startIndexing  или /api/indexPage"
         Site site = new Site();
         int i = 0;
 
+      //  siteRepository.deleteAll();
+
         LocalDateTime dateTime = LocalDateTime.now();
 
-
-        for (HashMap.Entry<String, String> mapSites : sites.entrySet()) {
+      //  for (HashMap.Entry <String, String> mapSites : startSites.entrySet()) {
+        for (var mapSites : sites.entrySet()) {
             if (mapSites.getKey().contains("url")) {
                 if  (i > 0) site = new Site();
                 i++;
@@ -95,25 +93,43 @@ public class SiteController {
     }
     @GetMapping("/api/startIndexing")
     public String startIndexing() {
-        //   Site site = new Site();
-        Long li = Long.valueOf(1);
-        String sUrl = "";
-        Optional<Site> site = siteRepository.findById(li);
-        if (site.isPresent()) {
-            sUrl = site.get().getUrl();
-            String siteMap = new ForkJoinPool().invoke(new FindMap(site.get(),pageRepository));
-            // System.out.println(siteMap);
-            JSONObject result = new JSONObject();
-            result.put("result", false);
-            result.put("error", "Все хорошо");
-            return result.toString();
+      //     Site site = new Site();
 
-        } else {
-            JSONObject result = new JSONObject();
-            result.put("result", false);
-            result.put("error", "Нет такого сайта !");
-            return result.toString();
+      //  Long li = Long.valueOf(1);
+        String sUrl = "";
+
+
+        long iCount = siteRepository.count();
+        List <Site> listSites = siteRepository.findAll();
+    //    for (long li = 1; li < iCount; li ++) {
+
+
+        for (Site site :listSites ) {
+
+      //      Optional<Site> site = siteRepository.findById(li);
+
+            if (site.getUrl() != null) {
+               // Site site = new Site();
+                sUrl = site.getUrl();
+                String siteMap = new ForkJoinPool().invoke(new FindMap(site, pageRepository));
+                // System.out.println(siteMap);
+                JSONObject result = new JSONObject();
+                result.put("result", false);
+                result.put("error", "Все хорошо");
+             //   return result.toString();
+
+            } else {
+                JSONObject result = new JSONObject();
+                result.put("result", false);
+                result.put("error", "Нет такого сайта !"+ sUrl);
+                //return result.toString();
+            }
         }
+        JSONObject result = new JSONObject();
+        result.put("result", false);
+        result.put("error", "Нет такого сайта !"+ sUrl);
+
+        return result.toString();
     }
 
 
