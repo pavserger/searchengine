@@ -42,7 +42,9 @@ public class FindMap extends RecursiveTask<String> {
     }
     public FindMap(Site site, PageRepository pageRepository, CopyOnWriteArraySet<String> allLinks) {//инициализируем новый список
         this.site = site;
-    //    this.allLinks = new CopyOnWriteArraySet<>();
+        this.allLinks = new CopyOnWriteArraySet<>();
+        this.allLinks = allLinks;
+
         this.pageRepository = pageRepository;
         this.url = site.getUrl();
         this.pageRecord = new Page();
@@ -103,8 +105,9 @@ public class FindMap extends RecursiveTask<String> {
                 String attributeUrl = element.absUrl("href");//все ссылки сайта
 
                 if (attributeUrl.startsWith(url)
+                        && !allLinks.isEmpty()
                         && !attributeUrl.contains("#")
-                        && allLinks.contains(attributeUrl)
+                        && !allLinks.contains(attributeUrl)
                         && ! attributeUrl.equals(null))
                 {
 
