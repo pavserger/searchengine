@@ -105,7 +105,7 @@ public class FindMap extends RecursiveTask<String> {
                 if (attributeUrl.startsWith(url)
                         && !attributeUrl.contains("#")
                         && allLinks.contains(attributeUrl)
-                        && ! (attributeUrl!= null))
+                        && ! attributeUrl.equals(null))
                 {
 
                     site.setUrl(attributeUrl);
