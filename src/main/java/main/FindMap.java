@@ -95,7 +95,8 @@ public class FindMap extends RecursiveTask<String> {
 
             // pageRecord.setContent(document.body().html());
 
-            pageRecord.setContent(document.title());
+            pageRecord.setTitlepage(document.title().toString());
+            pageRecord.setContent(document.body().toString());
             pageRecord.setPath(document.location());
             pageRepository.save(pageRecord);
 

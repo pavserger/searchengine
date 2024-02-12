@@ -26,6 +26,10 @@ public class Page implements Serializable {
     @Column(columnDefinition = "mediumtext", nullable = true)
     private String content;
 
+    @Column(columnDefinition = "text", nullable = true)
+    private String titlepage;
+
+
     @Transient
     private String title;
 

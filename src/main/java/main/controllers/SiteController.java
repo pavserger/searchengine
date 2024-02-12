@@ -95,12 +95,11 @@ public class SiteController {
     }
     @GetMapping("/api/startIndexing")
     public String startIndexing() {
+        init(); // инициализиция
       //     Site site = new Site();
 
       //  Long li = Long.valueOf(1);
         String sUrl = "";
-
-
         long iCount = siteRepository.count();
         List <Site> listSites = siteRepository.findAll();
     //    for (long li = 1; li < iCount; li ++) {
