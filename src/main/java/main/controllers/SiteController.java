@@ -59,7 +59,9 @@ public class SiteController {
         Site site = new Site();
         int i = 0;
 
-      //  siteRepository.deleteAll();
+        siteRepository.deleteAll();
+        pageRepository.deleteAll();
+
 
         LocalDateTime dateTime = LocalDateTime.now();
 
@@ -114,8 +116,8 @@ public class SiteController {
                 String siteMap = new ForkJoinPool().invoke(new FindMap(site, pageRepository));
                 // System.out.println(siteMap);
                 JSONObject result = new JSONObject();
-                result.put("result", false);
-                result.put("error", "Все хорошо");
+                result.put("result", true);
+            //    result.put("error", "Все хорошо");
              //   return result.toString();
 
             } else {
@@ -127,7 +129,7 @@ public class SiteController {
         }
         JSONObject result = new JSONObject();
         result.put("result", false);
-        result.put("error", "Нет такого сайта !"+ sUrl);
+        result.put("error", "Все прошло успешно");
 
         return result.toString();
     }

@@ -36,10 +36,18 @@ public class FindMap extends RecursiveTask<String> {
         this.allLinks = new CopyOnWriteArraySet<>();
         this.pageRepository = pageRepository;
         this.url = site.getUrl();
+        this.allLinks.add(url);
         this.pageRecord = new Page();
 
     }
+    public FindMap(Site site, PageRepository pageRepository, CopyOnWriteArraySet<String> allLinks) {//инициализируем новый список
+        this.site = site;
+    //    this.allLinks = new CopyOnWriteArraySet<>();
+        this.pageRepository = pageRepository;
+        this.url = site.getUrl();
+        this.pageRecord = new Page();
 
+    }
 
 /*
     public FindMap(String url, CopyOnWriteArraySet<String> allLinks, String tabulate,PageRepository pageRepository) {//передаем url
@@ -85,11 +93,8 @@ public class FindMap extends RecursiveTask<String> {
 
             // pageRecord.setContent(document.body().html());
 
-            pageRecord.setContent("text html");
-
+            pageRecord.setContent(document.title());
             pageRecord.setPath(document.location());
-
-
             pageRepository.save(pageRecord);
 
             Elements elements = document.select("a[href]");
@@ -99,10 +104,12 @@ public class FindMap extends RecursiveTask<String> {
 
                 if (attributeUrl.startsWith(url)
                         && !attributeUrl.contains("#")
-                        && !allLinks.contains(attributeUrl)) {
+                        && allLinks.contains(attributeUrl)
+                        && ! (attributeUrl!= null))
+                {
 
                     site.setUrl(attributeUrl);
-                    FindMap links = new FindMap(site,  pageRepository);
+                    FindMap links = new FindMap(site,  pageRepository, allLinks);
                     links.fork();
                     allTask.add(links);
                     allLinks.add(attributeUrl);
