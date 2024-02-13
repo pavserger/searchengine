@@ -8,6 +8,8 @@ import main.FindMap;
 
 import main.model.*;
 import netscape.javascript.JSObject;
+import org.apache.lucene.morphology.LuceneMorphology;
+import org.apache.lucene.morphology.russian.RussianLuceneMorphology;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -53,7 +55,17 @@ public class SiteController {
         this.pageRepository = pageRepository;
     }
 
-    @GetMapping("/init/")
+    @GetMapping("/lem/")
+    public void lem() throws IOException {
+        LuceneMorphology luceneMorph =
+                new RussianLuceneMorphology();
+        List<String> wordBaseForms =
+                luceneMorph.getNormalForms("леса");
+        wordBaseForms.forEach(System.out::println);
+    }
+
+
+        @GetMapping("/init/")
     public void init() {
                                             // код должен быть перенесен в "/api/startIndexing  или /api/indexPage"
         Site site = new Site();

@@ -13,7 +13,16 @@ public class Application {
     public static void main(String[] args) {
        SpringApplication.run(Application.class, args);
 
-        //  System.out.println(config.getSites().toString());
     }
+
+    /*
+    public static void main(String[] args) {
+        SpringApplication.run(SpringLemmaExampleApplication.class, args);
+    }
+
+     */
+
+
+
 
 }
