@@ -20,10 +20,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ForkJoinPool;
 
 @RestController
@@ -58,135 +55,44 @@ public class SiteController {
 
     @GetMapping("/lem/")
     public void lem() throws IOException {
-     /*
-        LuceneMorphology luceneMorph =
-                new RussianLuceneMorphology();
-        List<String> wordBaseForms =
-                luceneMorph.getNormalForms("леса");
-        wordBaseForms.forEach(System.out::println);
-*/
+
+        List <Site> listSites = siteRepository.findAll();
+        List <Page> listPage  = pageRepository.findAll();
 
         LuceneMorphology  luceneMorph =
                 new RussianLuceneMorphology();
         LemmaFinder lemmaFinder = new LemmaFinder (luceneMorph);
-       HashMap<String, Integer> listLemma = (HashMap<String, Integer>)
-                lemmaFinder.collectLemmas("Привет малиыш");
-        System.out.println(listLemma.toString());
-    }
-        /*
+
+        Lemma lemmaBD ;
 
 
+        for (Site site :listSites ) {
+            for (Page page :listPage ) {
 
-    public class LemmaFinder {
-    private final LuceneMorphology luceneMorphology;
-    private static final String WORD_TYPE_REGEX = "\\W\\w&&[^а-яА-Я\\s]";
-    private static final String[] particlesNames = new String[]{"МЕЖД", "ПРЕДЛ", "СОЮЗ"};
+                        String sText = page.getTitlepage().toString();
+                        HashMap<String, Integer> listLemma = (HashMap<String, Integer>)
+                                 lemmaFinder.collectLemmas(sText);
 
-    public static LemmaFinder getInstance() throws IOException {
-        LuceneMorphology morphology= new RussianLuceneMorphology();
-        return new LemmaFinder(morphology);
-    }
+                Map<String, Integer> map = new HashMap<>();
+                Iterator mapIterator = map.entrySet().iterator();
 
-    private LemmaFinder(LuceneMorphology luceneMorphology) {
-        this.luceneMorphology = luceneMorphology;
-    }
-
-    private LemmaFinder(){
-        throw new RuntimeException("Disallow construct");
-    }
-
-
-     * Метод разделяет текст на слова, находит все леммы и считает их количество.
-     *
-     * @param text текст из которого будут выбираться леммы
-     * @return ключ является леммой, а значение количеством найденных лемм
-
-        public Map<String, Integer> collectLemmas(String text) {
-            String[] words = arrayContainsRussianWords(text);
-            HashMap<String, Integer> lemmas = new HashMap<>();
-
-            for (String word : words) {
-                if (word.isBlank()) {
-                    continue;
+                while (mapIterator.hasNext()) {
+                    Map.Entry<String, Integer> entry = (Map.Entry<String, Integer>) mapIterator.next();
+                    System.out.println("Key: " + entry.getKey());
+                    System.out.println("Value: " + entry.getValue());
                 }
 
-                List<String> wordBaseForms = luceneMorphology.getMorphInfo(word);
-                if (anyWordBaseBelongToParticle(wordBaseForms)) {
-                    continue;
-                }
+               // for (int i = 0; i < listLemma.size(); i++) {
+               //
+               // }
+                listLemma.forEach();
+                System.out.println(listLemma.toString());
 
-                List<String> normalForms = luceneMorphology.getNormalForms(word);
-                if (normalForms.isEmpty()) {
-                    continue;
-                }
 
-                String normalWord = normalForms.get(0);
-
-                if (lemmas.containsKey(normalWord)) {
-                    lemmas.put(normalWord, lemmas.get(normalWord) + 1);
-                } else {
-                    lemmas.put(normalWord, 1);
-                }
             }
-
-            return lemmas;
         }
 
-
-
-         * @param text текст из которого собираем все леммы
-         * @return набор уникальных лемм найденных в тексте
-
-        public Set<String> getLemmaSet(String text) {
-            String[] textArray = arrayContainsRussianWords(text);
-            Set<String> lemmaSet = new HashSet<>();
-            for (String word : textArray) {
-                if (!word.isEmpty() && isCorrectWordForm(word)) {
-                    List<String> wordBaseForms = luceneMorphology.getMorphInfo(word);
-                    if (anyWordBaseBelongToParticle(wordBaseForms)) {
-                        continue;
-                    }
-                    lemmaSet.addAll(luceneMorphology.getNormalForms(word));
-                }
-            }
-            return lemmaSet;
-        }
-
-        private boolean anyWordBaseBelongToParticle(List<String> wordBaseForms) {
-            return wordBaseForms.stream().anyMatch(this::hasParticleProperty);
-        }
-
-        private boolean hasParticleProperty(String wordBase) {
-            for (String property : particlesNames) {
-                if (wordBase.toUpperCase().contains(property)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private String[] arrayContainsRussianWords(String text) {
-            return text.toLowerCase(Locale.ROOT)
-                    .replaceAll("([^а-я\\s])", " ")
-                    .trim()
-                    .split("\\s+");
-        }
-
-        private boolean isCorrectWordForm(String word) {
-            List<String> wordInfo = luceneMorphology.getMorphInfo(word);
-            for (String morphInfo : wordInfo) {
-                if (morphInfo.matches(WORD_TYPE_REGEX)) {
-                    return false;
-                }
-            }
-            return true;
-        }
     }
-
-         */
-
-
-
 
 
         @GetMapping("/init/")
