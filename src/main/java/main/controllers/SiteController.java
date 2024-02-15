@@ -42,15 +42,26 @@ public class SiteController {
     private PageRepository pageRepository;
     Page pageRec = new Page();
 
+    private LemmaRepository lemmaRepository ;
 
- //   private LemmaRepository lemmaRepository;
+    private IndexRepository indexRepository;
+
+
+
+
+    //   private LemmaRepository lemmaRepository;
  //   Lemma lemmaRec = new Lemma();
 
     // Рекомендуемый вариант внедрения зависимости:
     // внедрение зависимости в класс через конструктор
-    public SiteController(SiteRepository siteRepository, PageRepository pageRepository) {
+    public SiteController(SiteRepository siteRepository,
+                          PageRepository pageRepository,
+                          LemmaRepository lemmaRepository,
+                          IndexRepository indexRepository) {
         this.siteRepository = siteRepository;
         this.pageRepository = pageRepository;
+        this.lemmaRepository = lemmaRepository;
+        this.indexRepository = indexRepository;
     }
 
     @GetMapping("/lem/")
@@ -63,7 +74,7 @@ public class SiteController {
                 new RussianLuceneMorphology();
         LemmaFinder lemmaFinder = new LemmaFinder (luceneMorph);
 
-        Lemma lemmaBD ;
+
 
 
         for (Site site :listSites ) {
@@ -78,6 +89,19 @@ public class SiteController {
 
                 while (mapIterator.hasNext()) {
                     Map.Entry<String, Integer> entry = (Map.Entry<String, Integer>) mapIterator.next();
+                   Lemma lemma = new Lemma();
+                   lemma.setSite(site);
+                   lemma.setLemma(entry.getKey());
+                   float f = 56/89;
+                   lemma.setFrequency(f);
+                   lemmaRepository.save(lemma);
+
+                    Index index = new Index();
+                    index.setLemma(lemma);
+                    index.setPage(page);
+                    index.setRank(f);
+                    indexRepository.save(index);
+
                     System.out.println("Key: " + entry.getKey());
                     System.out.println("Value: " + entry.getValue());
                 }
