@@ -61,7 +61,9 @@ public class SiteController {
         this.siteRepository = siteRepository;
         this.pageRepository = pageRepository;
         this.lemmaRepository = lemmaRepository;
+        lemmaRepository.deleteAll();
         this.indexRepository = indexRepository;
+        indexRepository.deleteAll();
     }
 
     @GetMapping("/lem/")
@@ -70,14 +72,20 @@ public class SiteController {
         List <Site> listSites = siteRepository.findAll();
         List <Page> listPage  = pageRepository.findAll();
 
+        lemmaRepository.deleteAll();
+        indexRepository.deleteAll();
+
         LuceneMorphology  luceneMorph =
                 new RussianLuceneMorphology();
         LemmaFinder lemmaFinder = new LemmaFinder (luceneMorph);
 
-
+        HashMap<String, Integer> fullListLemma = new HashMap<String, Integer>();;
 
 
         for (Site site :listSites ) {
+
+            fullListLemma.clear();
+
             for (Page page :listPage ) {
 
                         String sText = page.getTitlepage().toString() + page.getContent();
@@ -86,12 +94,27 @@ public class SiteController {
 
             //    Map<String, Integer> map = new HashMap<>();
                 Iterator mapIterator = listLemma.entrySet().iterator();
-
                 while (mapIterator.hasNext()) {
                     Map.Entry<String, Integer> entry = (Map.Entry<String, Integer>) mapIterator.next();
-                   Lemma lemma = new Lemma();
-                   lemma.setSite(site);
-                   lemma.setLemma(entry.getKey());
+                    // заполнение массива лемм
+                    String sKey = entry.getKey();
+                    if (sKey.length()>=2) {
+                        int num = entry.getValue();
+                        if (fullListLemma.containsKey(sKey)) {
+                            int iLemma = fullListLemma.get(sKey) + num;
+                            fullListLemma.replace(sKey, iLemma);
+                        } else {
+                            fullListLemma.put(sKey, num);
+                        }
+                    }
+                }
+                //    Запись в базу
+                Iterator iterfullListLemma = fullListLemma.entrySet().iterator();
+                while (iterfullListLemma.hasNext()) {
+                    Map.Entry<String, Integer> entry = (Map.Entry<String, Integer>) iterfullListLemma.next();
+                    Lemma lemma = new Lemma();
+                    lemma.setSite(site);
+                    lemma.setLemma(entry.getKey());
                    int i = entry.getValue().intValue();
                    lemma.setFrequency(i);
                    lemmaRepository.save(lemma);
@@ -106,14 +129,6 @@ public class SiteController {
                     System.out.println("Key: " + entry.getKey());
                     System.out.println("Value: " + entry.getValue());
                 }
-
-               // for (int i = 0; i < listLemma.size(); i++) {
-               //
-               // }
-                //listLemma.forEach();
-               // System.out.println(listLemma.toString());
-
-
             }
         }
 
