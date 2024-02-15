@@ -21,7 +21,7 @@ public class Lemma {
     @Column(columnDefinition = "varchar(255)", nullable = false)
     private String lemma;
     @Column(nullable = false)
-    private float frequency;
+    private int frequency;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "site_id", nullable = false,
             foreignKey = @ForeignKey(name = "FK_lemma_site"))

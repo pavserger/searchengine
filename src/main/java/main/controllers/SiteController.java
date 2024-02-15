@@ -80,7 +80,7 @@ public class SiteController {
         for (Site site :listSites ) {
             for (Page page :listPage ) {
 
-                        String sText = page.getTitlepage().toString();
+                        String sText = page.getTitlepage().toString() + page.getContent();
                         HashMap<String, Integer> listLemma = (HashMap<String, Integer>)
                                  lemmaFinder.collectLemmas(sText);
 
@@ -92,13 +92,14 @@ public class SiteController {
                    Lemma lemma = new Lemma();
                    lemma.setSite(site);
                    lemma.setLemma(entry.getKey());
-                   float f = 56/89;
-                   lemma.setFrequency(f);
+                   int i = entry.getValue().intValue();
+                   lemma.setFrequency(i);
                    lemmaRepository.save(lemma);
 
                     Index index = new Index();
                     index.setLemma(lemma);
                     index.setPage(page);
+                    float f = 3.14f;
                     index.setRank(f);
                     indexRepository.save(index);
 
