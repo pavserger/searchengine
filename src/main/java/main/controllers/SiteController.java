@@ -73,8 +73,8 @@ public class SiteController {
                         HashMap<String, Integer> listLemma = (HashMap<String, Integer>)
                                  lemmaFinder.collectLemmas(sText);
 
-                Map<String, Integer> map = new HashMap<>();
-                Iterator mapIterator = map.entrySet().iterator();
+            //    Map<String, Integer> map = new HashMap<>();
+                Iterator mapIterator = listLemma.entrySet().iterator();
 
                 while (mapIterator.hasNext()) {
                     Map.Entry<String, Integer> entry = (Map.Entry<String, Integer>) mapIterator.next();
@@ -85,8 +85,8 @@ public class SiteController {
                // for (int i = 0; i < listLemma.size(); i++) {
                //
                // }
-                listLemma.forEach();
-                System.out.println(listLemma.toString());
+                //listLemma.forEach();
+               // System.out.println(listLemma.toString());
 
 
             }
