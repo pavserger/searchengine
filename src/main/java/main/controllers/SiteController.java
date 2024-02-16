@@ -69,70 +69,67 @@ public class SiteController {
     @GetMapping("/lem/")
     public void lem() throws IOException {
 
-        List <Site> listSites = siteRepository.findAll();
-        List <Page> listPage  = pageRepository.findAll();
+        List<Site> listSites = siteRepository.findAll();
+        List<Page> listPage = pageRepository.findAll();
 
-        lemmaRepository.deleteAll();
-        indexRepository.deleteAll();
 
-        LuceneMorphology  luceneMorph =
+        LuceneMorphology luceneMorph =
                 new RussianLuceneMorphology();
-        LemmaFinder lemmaFinder = new LemmaFinder (luceneMorph);
+        LemmaFinder lemmaFinder = new LemmaFinder(luceneMorph);
 
-        HashMap<String, Integer> fullListLemma = new HashMap<String, Integer>();;
+        HashMap<String, Integer> fullListLemma = new HashMap<String, Integer>();
 
-
-        for (Site site :listSites ) {
-
+        for (Site site : listSites) {
             fullListLemma.clear();
+            for (Page page : listPage) {
 
-            for (Page page :listPage ) {
+                String sText = page.getTitlepage().toString() + page.getContent();
+                HashMap<String, Integer> listLemma = (HashMap<String, Integer>)
+                        lemmaFinder.collectLemmas(sText);
 
-                        String sText = page.getTitlepage().toString() + page.getContent();
-                        HashMap<String, Integer> listLemma = (HashMap<String, Integer>)
-                                 lemmaFinder.collectLemmas(sText);
-
-            //    Map<String, Integer> map = new HashMap<>();
+                //    Map<String, Integer> map = new HashMap<>();
                 Iterator mapIterator = listLemma.entrySet().iterator();
                 while (mapIterator.hasNext()) {
                     Map.Entry<String, Integer> entry = (Map.Entry<String, Integer>) mapIterator.next();
                     // заполнение массива лемм
                     String sKey = entry.getKey();
-                    if (sKey.length()>=2) {
+                    if (sKey.length() >= 2) {
                         int num = entry.getValue();
-                        if (fullListLemma.containsKey(sKey)) {
+                        if (fullListLemma.get(sKey) != null) {
                             int iLemma = fullListLemma.get(sKey) + num;
                             fullListLemma.replace(sKey, iLemma);
                         } else {
                             fullListLemma.put(sKey, num);
                         }
                     }
-                }
-                //    Запись в базу
-                Iterator iterfullListLemma = fullListLemma.entrySet().iterator();
-                while (iterfullListLemma.hasNext()) {
-                    Map.Entry<String, Integer> entry = (Map.Entry<String, Integer>) iterfullListLemma.next();
-                    Lemma lemma = new Lemma();
-                    lemma.setSite(site);
-                    lemma.setLemma(entry.getKey());
-                   int i = entry.getValue().intValue();
-                   lemma.setFrequency(i);
-                   lemmaRepository.save(lemma);
-
                     Index index = new Index();
-                    index.setLemma(lemma);
+                    // index.setLemma(lemma); вопрос
                     index.setPage(page);
                     float f = 3.14f;
                     index.setRank(f);
-                    indexRepository.save(index);
-
-                    System.out.println("Key: " + entry.getKey());
-                    System.out.println("Value: " + entry.getValue());
+//                    indexRepository.save(index);
+                } // page
+                int count = 0;
+                Iterator iterfullListLemma = fullListLemma.entrySet().iterator();
+                while (iterfullListLemma.hasNext()) {
+                    Map.Entry<String, Integer> entry = (Map.Entry<String, Integer>) iterfullListLemma.next();
+                    count ++;
+                    Lemma lemma = new Lemma();
+                    lemma.setSite(site);
+                    lemma.setLemma(entry.getKey());
+                    int i = entry.getValue().intValue();
+                    lemma.setFrequency(i);
+                    lemmaRepository.save(lemma);
                 }
-            }
-        }
+                System.out.println(count);
+                System.out.println(fullListLemma.size());
+
+            }  // site
+    }
 
     }
+
+
 
 
         @GetMapping("/init/")
@@ -163,17 +160,6 @@ public class SiteController {
             }
 
         }
-
-
-       // site = new Site();
-
-     /*
-        site.setName("Булгаковский дом");
-        site.setUrl("https://dombulgakova.ru/");
-        site.setType("INDEXED");
-        site.setStatusTime(dateTime);
-        siteRepository.save(site);
-    */
     }
     @GetMapping("/api/startIndexing")
     public String startIndexing() {

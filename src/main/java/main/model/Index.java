@@ -20,7 +20,7 @@ public class Index {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Page page;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lemma_id", nullable = false, foreignKey=@ForeignKey(name = "FK_index_lemma"))
+    @JoinColumn(name = "lemma_id", nullable = true, foreignKey=@ForeignKey(name = "FK_index_lemma"))
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Lemma lemma;
     @Column(name = "`rank`", nullable = false)
