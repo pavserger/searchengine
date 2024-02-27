@@ -8,16 +8,12 @@ import main.FindMap;
 
 import main.LemmaFinder;
 import main.model.*;
-import netscape.javascript.JSObject;
 import org.apache.lucene.morphology.LuceneMorphology;
 import org.apache.lucene.morphology.russian.RussianLuceneMorphology;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -71,16 +67,18 @@ public class SiteController {
 
         List<Site> listSites = siteRepository.findAll();
         List<Page> listPage = pageRepository.findAll();
+        List<Lemma> listLemms = lemmaRepository.findAll();
+
 
 
         LuceneMorphology luceneMorph =
                 new RussianLuceneMorphology();
         LemmaFinder lemmaFinder = new LemmaFinder(luceneMorph);
 
-        HashMap<String, Integer> fullListLemma = new HashMap<String, Integer>();
+        HashMap<String, Integer> pageLemmas = new HashMap<String, Integer>();
 
         for (Site site : listSites) {
-            fullListLemma.clear();
+            pageLemmas.clear();
             for (Page page : listPage) {
 
                 String sText = page.getTitlepage().toString() + page.getContent();
@@ -94,36 +92,38 @@ public class SiteController {
                     // заполнение массива лемм
                     String sKey = entry.getKey();
                     if (sKey.length() >= 2) {
-                        int num = entry.getValue();
-                        if (fullListLemma.get(sKey) != null) {
-                            int iLemma = fullListLemma.get(sKey) + num;
-                            fullListLemma.replace(sKey, iLemma);
-                        } else {
-                            fullListLemma.put(sKey, num);
+                       // int num = entry.getValue();
+                        Lemma lemma = new Lemma();
+
+                        List<Lemma> lemmas = lemmaRepository.findBylemma(sKey);
+                        if (!lemmas.isEmpty()) {              // the  lemma is present
+
+                            for (Lemma lem : lemmas){
+                               int fr = lem.getFrequency() + 1;
+                                lem.setFrequency(fr);
+                                lemmaRepository.save(lem);
+                            }
+
+                      //      int iLemma = pageLemmas.get(sKey) + 1;
+                       //     pageLemmas.replace(sKey, iLemma);
+                        } else {                               // new lemma
+                            pageLemmas.put(sKey, 1);
+                            lemma.setSite(site);
+                            lemma.setLemma(sKey);
+                            lemma.setFrequency(1);
+                            lemmaRepository.save(lemma);
+
+                            Index index = new Index();
+                            index.setLemma(lemma);
+                            float f = 3.14f;
+                            index.setRank(f);
+                            index.setPage(page);
+
+                            indexRepository.save(index);
+
                         }
                     }
-                    Index index = new Index();
-                    // index.setLemma(lemma); вопрос
-                    index.setPage(page);
-                    float f = 3.14f;
-                    index.setRank(f);
-//                    indexRepository.save(index);
                 } // page
-                int count = 0;
-                Iterator iterfullListLemma = fullListLemma.entrySet().iterator();
-                while (iterfullListLemma.hasNext()) {
-                    Map.Entry<String, Integer> entry = (Map.Entry<String, Integer>) iterfullListLemma.next();
-                    count ++;
-                    Lemma lemma = new Lemma();
-                    lemma.setSite(site);
-                    lemma.setLemma(entry.getKey());
-                    int i = entry.getValue().intValue();
-                    lemma.setFrequency(i);
-                    lemmaRepository.save(lemma);
-                }
-                System.out.println(count);
-                System.out.println(fullListLemma.size());
-
             }  // site
     }
 

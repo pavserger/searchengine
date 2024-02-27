@@ -20,6 +20,7 @@ public class Lemma {
     private int id;
     @Column(columnDefinition = "varchar(255)", nullable = false)
     private String lemma;
+
     @Column(nullable = false)
     private int frequency;
     @ManyToOne(fetch = FetchType.LAZY)
