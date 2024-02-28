@@ -200,31 +200,6 @@ public class SiteController {
     }
 
 
-/*
-
-        {
-            try {
-                FileWriter writer = new FileWriter(new File("src/main/resources/site_map.txt"));
-
-                writer.write(siteMap);
-                writer.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-*/
-
-
-
-        /*
-        JSONObject result = new JSONObject();
-        result.put("result",false);
-        result.put("error", "Индексация уже запущена Ха-Ха");
-
-        return result.toString();
-       //return "'result': false\n";
-
-         */
 
     @GetMapping("/api/statistics")
     public String statistics() {
@@ -272,6 +247,18 @@ public class SiteController {
     @GetMapping("/api/search")
     public String search(@RequestParam String query) {
         String sQuery = query;
+
+        List<Lemma> lemmas = lemmaRepository.findBylemma(sQuery);
+        for (Lemma lemma : lemmas){
+          int lem = lemma.getId();
+          List <Index> indexList = indexRepository.findBylemma_id(lem);
+          System.out.println(indexList);
+        }
+
+        // find lemma
+
+
+
         JSONObject result = new JSONObject();
 
         JSONObject data = new JSONObject();
