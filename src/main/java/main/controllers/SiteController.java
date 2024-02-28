@@ -104,8 +104,6 @@ public class SiteController {
                                 lemmaRepository.save(lem);
                             }
 
-                      //      int iLemma = pageLemmas.get(sKey) + 1;
-                       //     pageLemmas.replace(sKey, iLemma);
                         } else {                               // new lemma
                             pageLemmas.put(sKey, 1);
                             lemma.setSite(site);
@@ -115,7 +113,7 @@ public class SiteController {
 
                             Index index = new Index();
                             index.setLemma(lemma);
-                            float f = 3.14f;
+                            float f = entry.getValue();
                             index.setRank(f);
                             index.setPage(page);
 
