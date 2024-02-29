@@ -7,6 +7,6 @@ import java.util.List;
 
 @Repository
 public interface PageRepository extends JpaRepository<Page, Long> {
-    List<Page> findBySite_id (int site_id);
+    List<Page> findBySite_id (Long site_id);
 
 } 
