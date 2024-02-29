@@ -57,23 +57,6 @@ public class  GetStatistics {
               detal.put("lemmas",33);
               detals.put(detal);
           }
-/*
-          JSONObject detal = new JSONObject();
-          detal.put("url","http//name");
-          detal.put("name","name");
-
-          detal.put("status","INDEXED");
-          detal.put("statusTime",1600160357);
-          detal.put("error","Ошибка индексации: главная страница сайта недоступна");
-          detal.put("pages",5764);
-          detal.put("lemmas",32115);
-
-          JSONArray detals =new JSONArray();
-
-          detals.put(detal);
-          detals.put(detal);
-
-*/
 
           statistics.put("total",total);
           statistics.put("detailed",detals);
