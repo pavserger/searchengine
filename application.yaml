@@ -16,7 +16,5 @@ spring:
     show-sql: false
 indexing-settings:
   sites:
-    - url: https://ipfran.ru
-      name: ИПФ РАН
     - url: https://dombulgakova.ru
       name: Дом Булгакова

@@ -88,8 +88,8 @@ public class FindMap extends RecursiveTask<String> {
 
             //url = site.getUrl();
 
-            Document document = Jsoup.connect(url).ignoreContentType(false).maxBodySize(0).get();
-            Jsoup.connect(url).
+            Document document = Jsoup.connect(url).ignoreContentType(true).maxBodySize(204800).get();
+           // Jsoup.connect(url).
            int con =  document.connection().execute().statusCode();
             pageRecord.setCode(con);
 

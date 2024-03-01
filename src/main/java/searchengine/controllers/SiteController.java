@@ -141,6 +141,7 @@ public class SiteController {
         LocalDateTime dateTime = LocalDateTime.now();
 
       //  for (HashMap.Entry <String, String> mapSites : startSites.entrySet()) {
+
         for (var mapSites : sites.entrySet()) { //  load list sites from application.yaml
             if (mapSites.getKey().contains("url")) {
                 if  (i > 0) site = new Site();
@@ -202,6 +203,63 @@ public class SiteController {
 
     @GetMapping("/api/statistics")
     public String statistics() {
+        Site site = new Site();
+        int i = 0;
+        //  for (HashMap.Entry <String, String> mapSites : startSites.entrySet()) {
+        List <Site> sitesInBD = siteRepository.findAll(); // list sites in BD site
+        List <Site> delSitesBD = siteRepository.findAll(); // list sites in BD site
+        delSitesBD.clear();
+
+        LocalDateTime dateTime = LocalDateTime.now();
+
+        Map<String, String> delSites = new HashMap<String, String>();
+        Map<String, String> addSites = new HashMap<String, String>();
+        Map<String, String> testSites = new HashMap<String, String>();
+
+        String urlSite = "";
+        String nameSite = "";
+
+        for (var mapSites : sites.entrySet()) { //  load list sites from application.yaml
+            if (mapSites.getKey().contains("url")) {
+                urlSite = mapSites.getValue();
+            }
+            if (mapSites.getKey().contains("name")) {
+                nameSite = mapSites.getValue();
+            }
+            testSites.put(urlSite,nameSite);
+        }
+        for (Map.Entry<String, String> testUrlSite : testSites.entrySet()) {
+            urlSite = testUrlSite.getKey();
+            nameSite = testUrlSite.getValue();
+            List <Site> tempSites = siteRepository.findByurl(urlSite); // list sites in BD site
+            if (tempSites.isEmpty())
+            {  // site is present in table and no BD
+                addSites.put(urlSite,nameSite); // need add site
+            }
+        }
+        for (var siteBD : sitesInBD) {             // delete sites from BD
+            String test = siteBD.getUrl();
+            if (!testSites.containsKey(test)) {
+                nameSite = siteBD.getName();
+                urlSite = siteBD.getUrl();
+                delSitesBD.add(siteBD);
+            }
+        }
+        for (var delSiteBD1 : delSitesBD) {      // delete sites from BD
+            siteRepository.delete(delSiteBD1);
+        }
+
+        for (Map.Entry<String, String> addSite : addSites.entrySet()) { // add sites to BD
+            nameSite = addSite.getKey();
+            urlSite = addSite.getValue();
+            Site site1 = new Site();
+            site1.setUrl(urlSite);
+            site1.setName(nameSite);
+            site1.setType("INDEXED");
+            site1.setStatusTime(dateTime);
+            siteRepository.save(site1);
+        }
+
         GetStatistics getStatistics = new GetStatistics(siteRepository,pageRepository,
                 lemmaRepository,indexRepository);
         return getStatistics.getStatisticsData();
