@@ -88,7 +88,7 @@ public class FindMap extends RecursiveTask<String> {
 
             //url = site.getUrl();
 
-            Document document = Jsoup.connect(url).ignoreContentType(true).maxBodySize(204800).get();
+            Document document = Jsoup.connect(url).ignoreContentType(false).maxBodySize(204800).get();
            // Jsoup.connect(url).
            int con =  document.connection().execute().statusCode();
             pageRecord.setCode(con);
@@ -97,8 +97,19 @@ public class FindMap extends RecursiveTask<String> {
             // pageRecord.setContent(document.body().html());
 
             pageRecord.setTitlepage(document.title().toString());
-            pageRecord.setContent(document.body().toString());
-            pageRecord.setPath(document.location());
+            System.out.println("title"+ "-------------------------------");
+            System.out.println(document.title().toString());
+
+            pageRecord.setContent(document.body().text().toString());
+            String s = document.body().text().toString();
+            s.replaceAll("[^а-яёА-ЯЁ]", "");
+            System.out.println("body"+ "-------------------------------");
+            System.out.println (s);
+
+            pageRecord.setPath(document.location().toString());
+            System.out.println("location"+ "-------------------------------");
+            System.out.println(document.location().toString());
+
             pageRepository.save(pageRecord);
 
             Elements elements = document.select("a[href]");
