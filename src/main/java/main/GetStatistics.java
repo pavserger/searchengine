@@ -5,7 +5,10 @@ import com.github.tsohr.JSONObject;
 import lombok.Data;
 import main.model.*;
 
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
 public class  GetStatistics {
@@ -26,9 +29,66 @@ public class  GetStatistics {
         this.lemmaRepository = lemmaRepository;
         this.indexRepository = indexRepository;
     }
+    public void sinchronData( Map<String, String> testSites) {
+        //   Sinchronization table Application.yaml and table Sites
 
-      public String getStatisticsData() {
+        Site site = new Site();
+        int i = 0;
+        //  for (HashMap.Entry <String, String> mapSites : startSites.entrySet()) {
+        List <Site> sitesInBD = siteRepository.findAll(); // list sites in BD site
+        List <Site> delSitesBD = siteRepository.findAll(); // list sites in BD site clear
+        delSitesBD.clear();
 
+        LocalDateTime dateTime = LocalDateTime.now();
+
+        Map<String, String> delSites = new HashMap<String, String>();
+        Map<String, String> addSites = new HashMap<String, String>();
+       // Map<String, String> testSites = new HashMap<String, String>();
+
+        String urlSite = "";
+        String nameSite = "";
+
+        for (Map.Entry<String, String> testUrlSite : testSites.entrySet()) { // list add sites in BD
+            urlSite = testUrlSite.getKey();
+            nameSite = testUrlSite.getValue();
+            List <Site> tempSites = siteRepository.findByurl(urlSite); // list sites in BD site
+            if (tempSites.isEmpty())
+            {  // site is present in table and no BD
+                addSites.put(urlSite,nameSite); // need add site
+            }
+        }
+        for (var siteBD : sitesInBD) {             // list delete sites from BD
+            String test = siteBD.getUrl();
+            if (!testSites.containsKey(test)) {
+                nameSite = siteBD.getName();
+                urlSite = siteBD.getUrl();
+                delSitesBD.add(siteBD);
+            }
+        }
+        for (var delSiteBD1 : delSitesBD) {      // delete sites from BD
+            siteRepository.delete(delSiteBD1);
+        }
+
+        for (Map.Entry<String, String> addSite : addSites.entrySet()) { // add sites to BD
+            nameSite = addSite.getValue();
+            urlSite = addSite.getKey();
+            Site site1 = new Site();
+            site1.setUrl(urlSite);
+            site1.setName(nameSite);
+            site1.setType("INDEXED");
+            site1.setStatusTime(dateTime);
+            siteRepository.save(site1);
+        }
+
+
+
+    }
+
+
+        public String getStatisticsData() {
+
+
+            //  Out statistics
           JSONObject result = new JSONObject();
           JSONObject statistics = new JSONObject();
           //  JSONArray ar =new JSONArray();

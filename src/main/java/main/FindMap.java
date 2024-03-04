@@ -51,32 +51,17 @@ public class FindMap extends RecursiveTask<String> {
 
     }
 
-/*
-    public FindMap(String url, CopyOnWriteArraySet<String> allLinks, String tabulate,PageRepository pageRepository) {//передаем url
-        this.url = url;
-        this.allLinks = allLinks;
-        this.tabulate = tabulate + "     ";
-        this.pageRepository = pageRepository;
-        this.pageRecord = new Page();
 
-    }
-*/
 
     @Override
     protected String compute() {
-        /*
-        //получаем уровень отступа
-        String tabulate = StringUtils.repeat("\t",
-                url.lastIndexOf("/") != url.length() - 1 ? StringUtils.countMatches(url, "/") - 2
-                        : StringUtils.countMatches(url, "/") - 3);
-*/
-    //    tabulate =  tabulate +"    ";
+
 
         StringBuilder stringBuilder = new StringBuilder(tabulate + url + "\n");
         Set<FindMap> allTask = new TreeSet<>(Comparator.comparing(o -> o.url));
 
         try {
-            Thread.sleep(100);//чтобы не заблокировали
+            Thread.sleep(200);//чтобы не заблокировали
 
              // pageRecord.setId(0);
               pageRecord.setSite(site);
@@ -86,9 +71,9 @@ public class FindMap extends RecursiveTask<String> {
             // pageRecord.setTitle("Главная страница");
            //   pageRepository.save(pageRecord);
 
-            //url = site.getUrl();
+            url = site.getUrl();
 
-            Document document = Jsoup.connect(url).ignoreContentType(false).maxBodySize(204800).get();
+            Document document = Jsoup.connect(url).ignoreContentType(true).maxBodySize(204800).get();
            // Jsoup.connect(url).
            int con =  document.connection().execute().statusCode();
             pageRecord.setCode(con);
@@ -97,18 +82,20 @@ public class FindMap extends RecursiveTask<String> {
             // pageRecord.setContent(document.body().html());
 
             pageRecord.setTitlepage(document.title().toString());
-            System.out.println("title"+ "-------------------------------");
-            System.out.println(document.title().toString());
+           // System.out.println("title"+ "-------------------------------");
+           // System.out.println(document.title().toString());
 
-            pageRecord.setContent(document.body().text().toString());
+           // pageRecord.setContent(document.body().text().toString());
             String s = document.body().text().toString();
             s.replaceAll("[^а-яёА-ЯЁ]", "");
-            System.out.println("body"+ "-------------------------------");
-            System.out.println (s);
+            pageRecord.setContent(s);
+
+          //  System.out.println("body"+ "-------------------------------");
+          //  System.out.println (s);
 
             pageRecord.setPath(document.location().toString());
-            System.out.println("location"+ "-------------------------------");
-            System.out.println(document.location().toString());
+          //  System.out.println("location"+ "-------------------------------");
+          //  System.out.println(document.location().toString());
 
             pageRepository.save(pageRecord);
 
