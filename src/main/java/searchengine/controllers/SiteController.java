@@ -49,6 +49,7 @@ public class SiteController {
 
     // Рекомендуемый вариант внедрения зависимости:
     // внедрение зависимости в класс через конструктор
+
     public SiteController(SiteRepository siteRepository,
                           PageRepository pageRepository,
                           LemmaRepository lemmaRepository,
@@ -56,117 +57,16 @@ public class SiteController {
         this.siteRepository = siteRepository;
         this.pageRepository = pageRepository;
         this.lemmaRepository = lemmaRepository;
-        //  lemmaRepository.deleteAll();
         this.indexRepository = indexRepository;
-       // indexRepository.deleteAll();
     }
 
-    /*
-    @GetMapping("/lem/")
-    public void lem() throws IOException {
-
-        List<Site> listSites = siteRepository.findAll();
-        List<Page> listPage = pageRepository.findAll();
-        List<Lemma> listLemms = lemmaRepository.findAll();
-
-
-
-        LuceneMorphology luceneMorph =
-                new RussianLuceneMorphology();
-        LemmaFinder lemmaFinder = new LemmaFinder(luceneMorph);
-
-        HashMap<String, Integer> pageLemmas = new HashMap<String, Integer>();
-
-        for (Site site : listSites) {
-            pageLemmas.clear();
-            for (Page page : listPage) {
-
-                String sText = page.getTitlepage().toString() + page.getContent();
-                HashMap<String, Integer> listLemma = (HashMap<String, Integer>)
-                        lemmaFinder.collectLemmas(sText);
-
-                //    Map<String, Integer> map = new HashMap<>();
-                Iterator mapIterator = listLemma.entrySet().iterator();
-                while (mapIterator.hasNext()) {
-                    Map.Entry<String, Integer> entry = (Map.Entry<String, Integer>) mapIterator.next();
-                    // заполнение массива лемм
-                    String sKey = entry.getKey();
-                    if (sKey.length() >= 2) {
-                       // int num = entry.getValue();
-                        Lemma lemma = new Lemma();
-
-                        List<Lemma> lemmas = lemmaRepository.findBylemma(sKey);
-                        if (!lemmas.isEmpty()) {              // the  lemma is present
-
-                            for (Lemma lem : lemmas){
-                               int fr = lem.getFrequency() + 1;
-                                lem.setFrequency(fr);
-                                lemmaRepository.save(lem);
-                            }
-
-                        } else {                               // new lemma
-                            pageLemmas.put(sKey, 1);
-                            lemma.setSite(site);
-                            lemma.setLemma(sKey);
-                            lemma.setFrequency(1);
-                            lemmaRepository.save(lemma);
-
-                            Index index = new Index();
-                            index.setLemma(lemma);
-                            float f = entry.getValue();
-                            index.setRank(f);
-                            index.setPage(page);
-
-                            indexRepository.save(index);
-
-                        }
-                    }
-                } // page
-            }  // site
-    }
-
-    }
-
-
-
-
-        @GetMapping("/init/")
-    public void init() {
-                                            // код должен быть перенесен в "/api/startIndexing  или /api/indexPage"
-        Site site = new Site();
-        int i = 0;
-
-        siteRepository.deleteAll();
-        pageRepository.deleteAll();
-
-
-        LocalDateTime dateTime = LocalDateTime.now();
-
-      //  for (HashMap.Entry <String, String> mapSites : startSites.entrySet()) {
-
-        for (var mapSites : sites.entrySet()) { //  load list sites from application.yaml
-            if (mapSites.getKey().contains("url")) {
-                if  (i > 0) site = new Site();
-                i++;
-                site.setUrl(mapSites.getValue());
-                site.setType("INDEXED");
-                site.setStatusTime(dateTime);
-
-            }
-            if (mapSites.getKey().contains("name")) {
-                site.setName(mapSites.getValue());
-                siteRepository.save(site);
-            }
-
-        }
-    }
-
-     */
     @GetMapping("/api/startIndexing")
     public String startIndexing() throws IOException {
 
         IndexSites indexSites = new IndexSites(siteRepository, pageRepository,
-                lemmaRepository, indexRepository);
+               lemmaRepository, indexRepository);
+
+      //  IndexSites indexSites = new IndexSites();
 
         JSONObject result = new JSONObject();
         result.put("result", false);
@@ -174,49 +74,6 @@ public class SiteController {
 
         return result.toString();
     }
-
-     //   init();  инициализиция
-     //   lem();   поиск лемм
-      //     Site site = new Site();
-
-      //  Long li = Long.valueOf(1);
-      //  String sUrl = "";
-      //  long iCount = siteRepository.count();
-      //  List <Site> listSites = siteRepository.findAll();
-    //    for (long li = 1; li < iCount; li ++) {
-
-/*
-        for (Site site :listSites ) {
-
-      //      Optional<Site> site = siteRepository.findById(li);
-
-            if (site.getUrl() != null) {
-               // Site site = new Site();
-                sUrl = site.getUrl();
-                String siteMap = new ForkJoinPool().invoke(new FindMap(site, pageRepository));
-                // System.out.println(siteMap);
-                JSONObject result = new JSONObject();
-                result.put("result", true);
-            //    result.put("error", "Все хорошо");
-             //   return result.toString();
-
-            } else {
-                JSONObject result = new JSONObject();
-                result.put("result", false);
-                result.put("error", "Нет такого сайта !"+ sUrl);
-                //return result.toString();
-            }
-        }
-        JSONObject result = new JSONObject();
-        result.put("result", false);
-        result.put("error", "Все прошло успешно");
-
-        return result.toString();
-
- */
-
-
-
 
 
 

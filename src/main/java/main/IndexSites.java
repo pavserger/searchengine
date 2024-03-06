@@ -31,6 +31,10 @@ public class IndexSites {
         findLemms();
         // return result.toString();
     }
+  //  public IndexSites() throws IOException {
+  //      findPage();
+  //      findLemms();
+  //  };
 
     public void findLemms() throws IOException { // find lemm
 
@@ -93,15 +97,7 @@ public class IndexSites {
             }  // site
         }
 
-       // init(); // инициализиция
-       // lem();  // поиск лемм
-        //     Site site = new Site();
 
-        //  Long li = Long.valueOf(1);
-       // String sUrl = "";
-       // long iCount = siteRepository.count();
-        //List<Site> listSites = siteRepository.findAll();
-        //    for (long li = 1; li < iCount; li ++) {
     }
 
         public void findPage() throws IOException {         // find page
@@ -112,7 +108,10 @@ public class IndexSites {
 
                 if (site.getUrl() != null) {
 
-                    String siteMap = new ForkJoinPool().invoke(new FindMap(site, pageRepository));
+
+                   String siteMap = new ForkJoinPool().invoke(new FindMap(site, pageRepository));
+                  //  List <Page> pages = new ForkJoinPool().invoke(new FindMap(site, pageRepository));
+
                     // System.out.println(siteMap);
                     JSONObject result = new JSONObject();
                     result.put("result", true);

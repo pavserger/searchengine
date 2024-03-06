@@ -18,8 +18,9 @@ public class Page implements Serializable {
     @JoinColumn(name = "site_id", nullable = false, foreignKey = @ForeignKey(name = "FK_page_site"))
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Site site;
-    @Column(columnDefinition = "text", nullable = false)
+    @Column(columnDefinition = "text", nullable = true)
     private String path;
+
     @Column(nullable = false)
     private int code;
 
@@ -33,8 +34,8 @@ public class Page implements Serializable {
     @Transient
     private String title;
 
-    @Override
-    public int hashCode() {
-        return path != null && site != null ? path.hashCode() + site.hashCode() : 0;
-    }
+  //  @Override
+   // public int hashCode() {
+   //     return path != null && site != null ? path.hashCode() + site.hashCode() : 0;
+   // }
 }
