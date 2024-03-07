@@ -62,24 +62,6 @@ public class SiteController {
 
     @GetMapping("/api/startIndexing")
     public String startIndexing() throws IOException {
-
-        IndexSites indexSites = new IndexSites(siteRepository, pageRepository,
-               lemmaRepository, indexRepository);
-
-      //  IndexSites indexSites = new IndexSites();
-
-        JSONObject result = new JSONObject();
-        result.put("result", false);
-        result.put("error", "Все прошло успешно");
-
-        return result.toString();
-    }
-
-
-
-    @GetMapping("/api/statistics")
-    public String statistics() {
-
         Map<String, String> testSites = new HashMap<String, String>(); //  load list sites from application.yaml
         String urlSite = "";
         String nameSite = "";
@@ -97,6 +79,41 @@ public class SiteController {
         GetStatistics getStatistics = new GetStatistics(siteRepository,pageRepository,
                 lemmaRepository,indexRepository);
         getStatistics.sinchronData( testSites);
+
+        IndexSites indexSites = new IndexSites(siteRepository, pageRepository,
+               lemmaRepository, indexRepository);
+
+      //  IndexSites indexSites = new IndexSites();
+
+        JSONObject result = new JSONObject();
+        result.put("result", false);
+        result.put("error", "Все прошло успешно");
+
+        return result.toString();
+    }
+
+
+
+    @GetMapping("/api/statistics")
+    public String statistics() {
+/*
+        Map<String, String> testSites = new HashMap<String, String>(); //  load list sites from application.yaml
+        String urlSite = "";
+        String nameSite = "";
+
+        for (var mapSites : sites.entrySet()) {
+            if (mapSites.getKey().contains("url")) {
+                urlSite = mapSites.getValue();
+            }
+            if (mapSites.getKey().contains("name")) {
+                nameSite = mapSites.getValue();
+            }
+            testSites.put(urlSite,nameSite);
+        }
+*/
+        GetStatistics getStatistics = new GetStatistics(siteRepository,pageRepository,
+                lemmaRepository,indexRepository);
+   //     getStatistics.sinchronData( testSites);
         return getStatistics.getStatisticsData();
     }
 

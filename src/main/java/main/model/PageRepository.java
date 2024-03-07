@@ -9,4 +9,5 @@ import java.util.List;
 public interface PageRepository extends JpaRepository<Page, Long> {
     List<Page> findBySite_id (Long site_id);
 
-} 
+    List<Page> findAllById(Long iSite);
+}

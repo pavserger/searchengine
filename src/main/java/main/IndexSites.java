@@ -39,7 +39,7 @@ public class IndexSites {
     public void findLemms() throws IOException { // find lemm
 
         List<Site> listSites = siteRepository.findAll();
-        List<Page> listPage = pageRepository.findAll();
+      //  List<Page> listPage = pageRepository.findAll();
         List<Lemma> listLemms = lemmaRepository.findAll();
 
 
@@ -50,6 +50,8 @@ public class IndexSites {
         HashMap<String, Integer> pageLemmas = new HashMap<String, Integer>();
 
         for (Site site : listSites) {
+            Long iSite = site.getId();
+            var listPage = pageRepository.findBySite_id(iSite);
             pageLemmas.clear();
             for (Page page : listPage) {
 
