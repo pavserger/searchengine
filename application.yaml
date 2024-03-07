@@ -16,6 +16,6 @@ spring:
     show-sql: false
 indexing-settings:
   sites:
-    - url: https://dombulgakova.ru
-      name: Дом Булгакова
+    - url: https://dombulgakova.ru/
+      name: Булкаковский дом
 

@@ -83,7 +83,6 @@ public class SiteController {
         IndexSites indexSites = new IndexSites(siteRepository, pageRepository,
                lemmaRepository, indexRepository);
 
-      //  IndexSites indexSites = new IndexSites();
 
         JSONObject result = new JSONObject();
         result.put("result", false);

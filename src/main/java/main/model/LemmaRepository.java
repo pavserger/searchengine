@@ -10,4 +10,6 @@ public interface LemmaRepository extends JpaRepository<Lemma, Long> {
 
     List<Lemma> findBylemma (String lemma);
 
+    List<Lemma> findBySite_id (Long site_id);
+
 }

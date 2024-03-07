@@ -114,7 +114,9 @@ public class  GetStatistics {
               Long i = site.getId();
               detal.put("pages",pageRepository.findBySite_id(i).size());
               // many to many  add cod
-              detal.put("lemmas",33);
+            //  detal.put("lemmas",66);
+              var listLemms = lemmaRepository.findBySite_id(site.getId());
+              detal.put("lemmas",listLemms.size());
               detals.put(detal);
           }
 
