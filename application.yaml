@@ -16,6 +16,8 @@ spring:
     show-sql: false
 indexing-settings:
   sites:
+    - url: https://radiomv.ru/
+      name: Милицейская волна
     - url: https://dombulgakova.ru/
       name: Булкаковский дом
 

@@ -121,13 +121,15 @@ public class FindMap extends RecursiveTask<String> {
         } catch (InterruptedException | IOException e) {
             e.printStackTrace();
             System.out.println(url);
-          //  pageRecord.setCode(e);
+            return "Ошибка !!";
+
+            //  pageRecord.setCode(e);
 
         }
 
         for (FindMap link : allTask) {
             stringBuilder.append(link.join());
         }
-        return stringBuilder.toString();
+        return "Все хорошо";
     }
 }
