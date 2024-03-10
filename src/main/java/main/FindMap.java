@@ -63,13 +63,7 @@ public class FindMap extends RecursiveTask<String> {
         try {
             Thread.sleep(200);//чтобы не заблокировали
 
-             // pageRecord.setId(0);
-              pageRecord.setSite(site);
-
-             // pageRecord.setCode(404);
-             // pageRecord.setPath("path");
-            // pageRecord.setTitle("Главная страница");
-           //   pageRepository.save(pageRecord);
+            pageRecord.setSite(site);
 
             url = site.getUrl();
 
@@ -121,7 +115,8 @@ public class FindMap extends RecursiveTask<String> {
         } catch (InterruptedException | IOException e) {
             e.printStackTrace();
             System.out.println(url);
-            return "Ошибка !!";
+            String sOut = "Ошибка !!  " + e.toString() + " " + url;
+            return sOut;
 
             //  pageRecord.setCode(e);
 

@@ -75,7 +75,7 @@ public class  GetStatistics {
             Site site1 = new Site();
             site1.setUrl(urlSite);
             site1.setName(nameSite);
-            site1.setType("INDEXED");
+            site1.setType("INDEXING");
             site1.setStatusTime(dateTime);
             siteRepository.save(site1);
         }
