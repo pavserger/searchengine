@@ -51,12 +51,29 @@ public class  GetStatistics {
         for (Map.Entry<String, String> testUrlSite : testSites.entrySet()) { // list add sites in BD
             urlSite = testUrlSite.getKey();
             nameSite = testUrlSite.getValue();
+
+            if (sitesInBD.isEmpty()) {
+                addSites.put(urlSite, nameSite); // need add site
+            }
+            for (Site siteBD : sitesInBD) {
+                String urlBD = siteBD.getUrl();
+                if (!urlBD.contains(urlSite)) {
+                    addSites.put(urlSite, nameSite); // need add site
+                } else {
+                    delSitesBD.add(siteBD);
+                }
+
+            }
+        }
+            /*
             List <Site> tempSites = siteRepository.findByurl(urlSite); // list sites in BD site
             if (tempSites.isEmpty())
             {  // site is present in table and no BD
                 addSites.put(urlSite,nameSite); // need add site
             }
+
         }
+
         for (var siteBD : sitesInBD) {             // list delete sites from BD
             String test = siteBD.getUrl();
             if (!testSites.containsKey(test)) {
@@ -65,6 +82,7 @@ public class  GetStatistics {
                 delSitesBD.add(siteBD);
             }
         }
+                 */
         for (var delSiteBD1 : delSitesBD) {      // delete sites from BD
             siteRepository.delete(delSiteBD1);
         }
