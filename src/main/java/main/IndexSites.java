@@ -114,7 +114,12 @@ public class IndexSites {
                    String siteMap = new ForkJoinPool().invoke(new FindMap(site, pageRepository));
                   //  List <Page> pages = new ForkJoinPool().invoke(new FindMap(site, pageRepository));
                     site.setLastError(siteMap);
-                    site.setType("INDEXED");
+                    if (siteMap.equals("Все хорошо")) {
+                        site.setType("INDEXED");
+                    } else {
+                        site.setType("FAILED");
+                    };
+
                     siteRepository.save(site);
 
                     // System.out.println(siteMap);

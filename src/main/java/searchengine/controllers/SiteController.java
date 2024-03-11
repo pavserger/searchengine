@@ -102,11 +102,38 @@ public class SiteController {
     }
 
     @PostMapping("/api/indexPage")
-    public String indexPage() {
+    public String indexPage(@RequestParam(required = true) String url) {
+/*
+        public Response search(@RequestParam(required = false) String query,
+                @RequestParam(required = false) String site,
+                @RequestParam(required = false) Integer offset,
+                @RequestParam(required = false) Integer limit) {
+*/
+
+        Map<String, String> testSites = new HashMap<String, String>(); //  load list sites from application.yaml
+        String urlSite = "";
+        String nameSite = "";
+
+        for (var mapSites : sites.entrySet()) {
+            if (mapSites.getKey().contains("url")) {
+                urlSite = mapSites.getValue();
+            }
+            if (mapSites.getKey().contains("name")) {
+                nameSite = mapSites.getValue();
+            }
+            testSites.put(urlSite,nameSite);
+        }
+/*
+        GetStatistics getStatistics = new GetStatistics(siteRepository,pageRepository,
+                lemmaRepository,indexRepository);
+        getStatistics.sinchronData( testSites);
+*/
+
+
         JSONObject result = new JSONObject();
      //   result.put("result": true);
         result.put("result",false);
-        result.put("error", "Данная страница находится за пределами сайтов, указанных в конфигурационном файле"  );
+        result.put("error", "Данная страница находится за пределами сайтов, указанных в конфигурационном файле  " + url);
 
         return result.toString();
         //return "'result': false\n";
