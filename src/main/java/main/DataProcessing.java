@@ -45,7 +45,10 @@ import java.util.Map;
          int i = 0;
          List <Site> sitesInBD = siteRepository.findAll(); // list sites in BD site
          List <Site> delSitesBD = siteRepository.findAll(); // list sites in BD site clear
+
          delSitesBD.clear();
+         pageRepository.deleteAll(); // delete all pages
+
 
          LocalDateTime dateTime = LocalDateTime.now();
 

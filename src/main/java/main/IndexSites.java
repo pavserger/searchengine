@@ -39,24 +39,16 @@ public class IndexSites {
   //      findLemms();
   //  };
 
-    public void findLemms(String url) throws IOException { // find lemm
+    public void findLemms(String url) throws IOException { // find lemms
 
         List<Site> listSites = siteRepository.findAll();
       //  List<Page> listPage = pageRepository.findAll();
         List<Lemma> listLemms = lemmaRepository.findAll();
 
+
         if (!url.equals("all")) {
-            var listSites2 = siteRepository.findAll();
-            listSites2.clear();
-            for (var site2 : listSites) {
-                if (site2.getUrl().contains(url)) {
-                    listSites2.add(site2);
-                }
-                listSites = listSites2;
-            }
+            listSites = dataProcessing.findSite(url);
         }
-
-
 
         LuceneMorphology luceneMorph =
                 new RussianLuceneMorphology();
