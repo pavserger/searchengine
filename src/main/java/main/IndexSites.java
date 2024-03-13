@@ -20,6 +20,8 @@ public class IndexSites {
     private LemmaRepository lemmaRepository ;
     private IndexRepository indexRepository;
 
+    private DataProcessing dataProcessing;
+
     public IndexSites(SiteRepository siteRepository, PageRepository pageRepository,
                       LemmaRepository lemmaRepository, IndexRepository indexRepository) throws IOException {
         this.siteRepository = siteRepository;
@@ -27,20 +29,33 @@ public class IndexSites {
         this.lemmaRepository = lemmaRepository;
         this.indexRepository = indexRepository;
 
-        findPage();
-        findLemms();
-        // return result.toString();
+        dataProcessing = new DataProcessing(siteRepository,pageRepository,
+                lemmaRepository,indexRepository);
+
+
     }
   //  public IndexSites() throws IOException {
   //      findPage();
   //      findLemms();
   //  };
 
-    public void findLemms() throws IOException { // find lemm
+    public void findLemms(String url) throws IOException { // find lemm
 
         List<Site> listSites = siteRepository.findAll();
       //  List<Page> listPage = pageRepository.findAll();
         List<Lemma> listLemms = lemmaRepository.findAll();
+
+        if (!url.equals("all")) {
+            var listSites2 = siteRepository.findAll();
+            listSites2.clear();
+            for (var site2 : listSites) {
+                if (site2.getUrl().contains(url)) {
+                    listSites2.add(site2);
+                }
+                listSites = listSites2;
+            }
+        }
+
 
 
         LuceneMorphology luceneMorph =
@@ -102,8 +117,12 @@ public class IndexSites {
 
     }
 
-        public void findPage() throws IOException {         // find page
+        public void findPage(String url) throws IOException {         // find page
             var listSites = siteRepository.findAll();
+            if (!url.equals("all")) {
+                listSites = dataProcessing.findSite(url);
+            }
+
             for (Site site : listSites) {
 
                 //      Optional<Site> site = siteRepository.findById(li);

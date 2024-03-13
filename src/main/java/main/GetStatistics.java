@@ -98,8 +98,6 @@ public class  GetStatistics {
             siteRepository.save(site1);
         }
 
-
-
     }
 
 
