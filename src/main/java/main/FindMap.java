@@ -74,13 +74,13 @@ public class FindMap extends RecursiveTask<String> {
 
 
             // pageRecord.setContent(document.body().html());
-            String s = document.title().toString().replaceAll("[^A-Za-zА-Яа-я0-9\\s]", "");
+            String s = document.title().toString().replaceAll("[^A-Za-zА-Яа-я0-9.\\s]", "");
             pageRecord.setTitlepage(s);
            // System.out.println("title"+ "-------------------------------");
            // System.out.println(document.title().toString());
 
            // pageRecord.setContent(document.body().text().toString());
-            String s2 = document.body().text().toString().replaceAll("[^A-Za-zА-Яа-я0-9\\s]", "");
+            String s2 = document.body().text().toString().replaceAll("[^A-Za-zА-Яа-я0-9.\\s]", "");
             pageRecord.setContent(s2);
 
           //  System.out.println("body"+ "-------------------------------");
