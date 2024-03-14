@@ -156,8 +156,19 @@ public class SiteController {
         return result.toString();
     }
     @GetMapping("/api/search")
-    public String search(@RequestParam String query) {
-        String sQuery = query;
+
+    /*
+
+    public Response search(@RequestParam(required = false) String query,
+                           @RequestParam(required = false) String site,
+                           @RequestParam(required = false) Integer offset,
+                           @RequestParam(required = false) Integer limit) {
+
+    */
+    public String search(@RequestParam String sQuery,
+                         @RequestParam(required = false) String site,
+                         @RequestParam(required = false) Integer offset,
+                         @RequestParam(required = false) Integer limit){
 
         List<Lemma> lemmas = lemmaRepository.findBylemma(sQuery);
         for (Lemma lemma : lemmas){
