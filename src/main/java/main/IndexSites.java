@@ -72,24 +72,35 @@ public class IndexSites {
                     Map.Entry<String, Integer> entry = (Map.Entry<String, Integer>) mapIterator.next();
                     // заполнение массива лемм
                     String sKey = entry.getKey();
+                    Integer iLemms = entry.getValue();
+
+/*
+                    if (sKey.equals("сайт")) {
+                        System.out.println(sText.toString());
+                        System.out.println( "  "+ iLemms);
+                    }
+*/
+
                     if (sKey.length() >= 2) {
                         // int num = entry.getValue();
-                        Lemma lemma = new Lemma();
 
                         List<Lemma> lemmas = lemmaRepository.findBylemma(sKey);
-                        if (!lemmas.isEmpty()) {              // the  lemma is present
+                        lemmas.clear();
+                        List<Lemma> lemmas2 = lemmaRepository.findBylemma(sKey);
 
-                            for (Lemma lem : lemmas) {
-                                int fr = lem.getFrequency() + 1;
-                                lem.setFrequency(fr);
-                                lemmaRepository.save(lem);
+
+                        for (Lemma lem : lemmas2) {
+                            if (lem.getSite().getId() == iSite) {
+                                lemmas.add(lem);
                             }
+                        }
 
-                        } else {                               // new lemma
-                            pageLemmas.put(sKey, 1);
+                        if (lemmas.isEmpty()) {              // the  lemma is no present
+                            Lemma lemma = new Lemma();
+
                             lemma.setSite(site);
                             lemma.setLemma(sKey);
-                            lemma.setFrequency(1);
+                            lemma.setFrequency(iLemms);
                             lemmaRepository.save(lemma);
 
                             Index index = new Index();
@@ -100,14 +111,32 @@ public class IndexSites {
 
                             indexRepository.save(index);
 
+
+                        } else {
+
+                            for (Lemma lem2 : lemmas) {
+                                /*
+                                if (lem2.getLemma().equals("сайт")) {
+                                    System.out.println(lem2.toString());
+                                    System.out.println(lem2.getFrequency()+ "  "+ iLemms);
+                                }
+
+                                 */
+                                int fr = lem2.getFrequency() + iLemms;
+                                lem2.setFrequency(fr);
+                                lemmaRepository.save(lem2);
+                            }
                         }
-                    }
-                } // page
-            }  // site
-        }
+                    } // sKey > 2
+                }
 
-
+            } // page
+        }  // site
     }
+
+
+
+
 
         public void findPage(String url) throws IOException {         // find page
             var listSites = siteRepository.findAll();

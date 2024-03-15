@@ -4,11 +4,8 @@ package main.controllers;
 import com.github.tsohr.JSONArray;
 import com.github.tsohr.JSONObject;
 import lombok.Data;
-import main.DataProcessing;
-import main.FindMap;
+import main.*;
 
-import main.IndexSites;
-import main.LemmaFinder;
 import main.model.*;
 import main.searchengine.GetStatistics;
 import org.apache.lucene.morphology.LuceneMorphology;
@@ -156,58 +153,19 @@ public class SiteController {
         return result.toString();
     }
     @GetMapping("/api/search")
-
-    /*
-
-    public Response search(@RequestParam(required = false) String query,
-                           @RequestParam(required = false) String site,
-                           @RequestParam(required = false) Integer offset,
-                           @RequestParam(required = false) Integer limit) {
-
-    */
-    public String search(@RequestParam String sQuery,
+    public String search(@RequestParam String  query,
                          @RequestParam(required = false) String site,
                          @RequestParam(required = false) Integer offset,
-                         @RequestParam(required = false) Integer limit){
+                         @RequestParam(required = false) Integer limit) throws IOException
 
-        List<Lemma> lemmas = lemmaRepository.findBylemma(sQuery);
-        for (Lemma lemma : lemmas){
-          int lem = lemma.getId();
-          List <Index> indexList = indexRepository.findBylemma_id(lem);
-          System.out.println(indexList);
-        }
-
-        // find lemma
-
-
-
-        JSONObject result = new JSONObject();
-
-        JSONObject data = new JSONObject();
-        data.put( "site", "http://www.site.com");
-        data.put(  "siteName", "Имя сайта");
-        data.put( "uri", "/path/to/page/6784");
-        data.put(  "title", "Заголовок страницы, которую выводим");
-        data.put(  "snippet", "Фрагмент текста,в котором найдены совпадения, <b>"+sQuery+"</b>");
-        data.put( "relevance", 0.93362);
-
-        JSONArray datas =new JSONArray();
-        datas.put(data);
-
-
-        result.put("result",true);
-        result.put("count",532);
-        result.put("data",datas);
+    {
+        Search search = new Search(siteRepository, pageRepository,
+                lemmaRepository, indexRepository);
+       String result = search.serchLemms(query);
         return result.toString();
+
+
+       // return "ok";
     }
 
-    /*
-    public ResponseEntity<Boolean> startIndexing() throws IOException {
-     //   IndexingStatusResponse status = indexingService.startIndexing();
-    //    if (indexingService.isIndexing()) {
-            return ResponseEntity.ok(false);
-        }
-   //     throw new UnknownIndexingStatusException("Неизвестная ошибка индексирования");
-
-*/
 }
