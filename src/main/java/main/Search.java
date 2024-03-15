@@ -2,11 +2,15 @@ package main;
 
 import com.github.tsohr.JSONArray;
 import com.github.tsohr.JSONObject;
+
+import lombok.Data;
 import main.model.*;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+@Data
 
 public class Search {
 
@@ -36,15 +40,23 @@ public class Search {
 
 
     public String serchLemms ( String sQuery)  {
-
+        String str = "";
         List<Lemma> lemmas = lemmaRepository.findBylemma(sQuery);
         for (Lemma lemma : lemmas){
             int lem = lemma.getId();
             List <Index> indexList = indexRepository.findBylemma_id(lem);
             System.out.println(indexList);
+
+            for (var page : indexList) {
+                str = page.getPage().getContent().toString();
+            }
+
+
         }
 
         // find lemma
+
+
 
         JSONObject result = new JSONObject();
 
@@ -53,7 +65,7 @@ public class Search {
         data.put(  "siteName", "Имя сайта");
         data.put( "uri", "/path/to/page/6784");
         data.put(  "title", "Заголовок страницы, которую выводим");
-        data.put(  "snippet", "Фрагмент текста,в котором найдены совпадения, <b>"+sQuery+"</b>");
+        data.put(  "snippet", "Фрагмент текста,в котором найдены совпадения, <b>"+sQuery+"</b>"+ str);
         data.put( "relevance", 0.93362);
 
         JSONArray datas =new JSONArray();
