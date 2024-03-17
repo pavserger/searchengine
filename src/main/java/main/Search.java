@@ -41,14 +41,27 @@ public class Search {
 
     public String serchLemms ( String sQuery)  {
         String str = "";
+        String title = "";
+        String uri = "";
+
+        String site  = "";
+        String siteName  = "";
+
         List<Lemma> lemmas = lemmaRepository.findBylemma(sQuery);
         for (Lemma lemma : lemmas){
             int lem = lemma.getId();
             List <Index> indexList = indexRepository.findBylemma_id(lem);
-            System.out.println(indexList);
+            //          System.out.println(indexList);
 
             for (var page : indexList) {
                 str = page.getPage().getContent().toString();
+                title = page.getPage().getTitlepage().toString();
+                uri = page.getPage().getPath().toString();
+
+                site = page.getPage().getSite().getUrl().toString();
+                siteName = page.getPage().getSite().getName().toString();
+
+
             }
 
 
@@ -56,16 +69,14 @@ public class Search {
 
         // find lemma
 
-
-
         JSONObject result = new JSONObject();
 
         JSONObject data = new JSONObject();
-        data.put( "site", "http://www.site.com");
-        data.put(  "siteName", "Имя сайта");
-        data.put( "uri", "/path/to/page/6784");
-        data.put(  "title", "Заголовок страницы, которую выводим");
-        data.put(  "snippet", "Фрагмент текста,в котором найдены совпадения, <b>"+sQuery+"</b>"+ str);
+        data.put( "site", site);
+        data.put(  "siteName", siteName);
+        data.put( "uri", uri);
+        data.put(  "title", title);
+        data.put(  "snippet", "Фрагмент текста,в котором найдены совпадения, <b>"+sQuery+"</b>\n"+ str);
         data.put( "relevance", 0.93362);
 
         JSONArray datas =new JSONArray();
@@ -73,7 +84,7 @@ public class Search {
 
 
         result.put("result",true);
-        result.put("count",532);
+        result.put("count",33);
         result.put("data",datas);
         return result.toString();
 
