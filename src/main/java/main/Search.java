@@ -39,6 +39,21 @@ public class Search {
     }
 
 
+    public String serchStrigOut  (String text, String sQuery)  {
+        String stringOut = "";
+        String[] strings = text.split(" ");
+        int numWord = 0;
+        for (String word : strings) {
+            numWord++;
+            if (word.equals(sQuery)) {
+                numWord = (numWord <= 2) ? 2 : numWord;
+                stringOut = strings[numWord-2] + " <b>"+ strings[numWord-1]+"</b>"+
+                        " "+  strings[numWord] +" "+  strings[numWord+1];
+            }
+        }
+        return  stringOut;
+    }
+
     public String serchLemms ( String sQuery)  {
         String str = "";
         String title = "";
@@ -48,6 +63,7 @@ public class Search {
         String siteName  = "";
 
         List<Lemma> lemmas = lemmaRepository.findBylemma(sQuery);
+
         for (Lemma lemma : lemmas){
             int lem = lemma.getId();
             List <Index> indexList = indexRepository.findBylemma_id(lem);
@@ -76,7 +92,8 @@ public class Search {
         data.put(  "siteName", siteName);
         data.put( "uri", uri);
         data.put(  "title", title);
-        data.put(  "snippet", "Фрагмент текста,в котором найдены совпадения, <b>"+sQuery+"</b>\n"+ str);
+       // data.put(  "snippet", "Фрагмент текста,в котором найдены совпадения, <b>"+sQuery+"</b>\n"+ str);
+        data.put(  "snippet", serchStrigOut (str,sQuery));
         data.put( "relevance", 0.93362);
 
         JSONArray datas =new JSONArray();
@@ -84,7 +101,7 @@ public class Search {
 
 
         result.put("result",true);
-        result.put("count",33);
+        result.put("count",lemmas.size());
         result.put("data",datas);
         return result.toString();
 
