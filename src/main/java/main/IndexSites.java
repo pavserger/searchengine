@@ -54,12 +54,12 @@ public class IndexSites {
                 new RussianLuceneMorphology();
         LemmaFinder lemmaFinder = new LemmaFinder(luceneMorph);
 
-        HashMap<String, Integer> pageLemmas = new HashMap<String, Integer>();
+        // HashMap<String, Integer> pageLemmas = new HashMap<String, Integer>();
 
         for (Site site : listSites) {
             Long iSite = site.getId();
             var listPage = pageRepository.findBySite_id(iSite);
-            pageLemmas.clear();
+          //  pageLemmas.clear();
             for (Page page : listPage) {
 
                 String sText = page.getTitlepage().toString() + page.getContent();
@@ -84,7 +84,7 @@ public class IndexSites {
                     if (sKey.length() >= 2) {
                         // int num = entry.getValue();
 
-                        List<Lemma> lemmas = lemmaRepository.findBylemma(sKey);
+                        List<Lemma> lemmas = lemmaRepository.findBylemma(sKey); // будет заполняться
                         lemmas.clear();
                         List<Lemma> lemmas2 = lemmaRepository.findBylemma(sKey);
 
@@ -114,17 +114,19 @@ public class IndexSites {
 
                         } else {
 
-                            for (Lemma lem2 : lemmas) {
-                                /*
-                                if (lem2.getLemma().equals("сайт")) {
-                                    System.out.println(lem2.toString());
-                                    System.out.println(lem2.getFrequency()+ "  "+ iLemms);
-                                }
-
-                                 */
+                            for (Lemma lem2 : lemmas) {  // the  lemma is present
                                 int fr = lem2.getFrequency() + iLemms;
                                 lem2.setFrequency(fr);
                                 lemmaRepository.save(lem2);
+
+                                Index index = new Index();
+                                index.setLemma(lem2);
+                                float f = entry.getValue();
+                                index.setRank(f);
+                                index.setPage(page);
+
+                                indexRepository.save(index);
+
                             }
                         }
                     } // sKey > 2
