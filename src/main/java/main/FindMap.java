@@ -15,7 +15,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.RecursiveTask;
 
 public class FindMap extends RecursiveTask<String> {
-    private String url;//адрес
+    private String url = "";
     private String level;
     private String tabulate = "";
 
@@ -40,14 +40,13 @@ public class FindMap extends RecursiveTask<String> {
         this.pageRecord = new Page();
 
     }
-    public FindMap(Site site, PageRepository pageRepository, CopyOnWriteArraySet<String> allLinks) {//инициализируем новый список
+    public FindMap(Site site ,String url, PageRepository pageRepository, CopyOnWriteArraySet<String> allLinks) {//инициализируем новый список
         this.site = site;
         this.allLinks = new CopyOnWriteArraySet<>();
         this.allLinks = allLinks;
-
         this.pageRepository = pageRepository;
-        this.url = site.getUrl();
-        this.pageRecord = new Page();
+        this.url = url;
+     //   this.pageRecord = new Page();
 
     }
 
@@ -62,40 +61,32 @@ public class FindMap extends RecursiveTask<String> {
 
         try {
             Thread.sleep(200);//чтобы не заблокировали
-
+            pageRecord = new Page();
             pageRecord.setSite(site);
+            //url = site.getUrl();
 
-            url = site.getUrl();
+            if (url == "") {url = site.getUrl();}
 
             Document document = Jsoup.connect(url).ignoreContentType(true).maxBodySize(204800).get();
            // Jsoup.connect(url).
            int con =  document.connection().execute().statusCode();
             pageRecord.setCode(con);
-
-
-            // pageRecord.setContent(document.body().html());
             String s = document.title().toString().replaceAll("[^A-Za-zА-Яа-я0-9.\\s]", "");
             pageRecord.setTitlepage(s);
-           // System.out.println("title"+ "-------------------------------");
-           // System.out.println(document.title().toString());
-
-           // pageRecord.setContent(document.body().text().toString());
             String s2 = document.body().text().toString().replaceAll("[^A-Za-zА-Яа-я0-9.\\s]", "");
             pageRecord.setContent(s2);
 
-          //  System.out.println("body"+ "-------------------------------");
-          //  System.out.println (s);
-
+         //   String s3 = document.location().toString();
             pageRecord.setPath(document.location().toString());
           //  System.out.println("location"+ "-------------------------------");
           //  System.out.println(document.location().toString());
-
             pageRepository.save(pageRecord);
-
             Elements elements = document.select("a[href]");
 
             for (Element element : elements) {
                 String attributeUrl = element.absUrl("href");//все ссылки сайта
+
+                System.out.println(attributeUrl);
 
                 if (attributeUrl.startsWith(url)
                         && !allLinks.isEmpty()
@@ -104,8 +95,8 @@ public class FindMap extends RecursiveTask<String> {
                         && ! attributeUrl.equals(null))
                 {
 
-                    site.setUrl(attributeUrl);
-                    FindMap links = new FindMap(site,  pageRepository, allLinks);
+                 //   site.setUrl(attributeUrl);
+                    FindMap links = new FindMap(site, attributeUrl,  pageRepository, allLinks);
                     links.fork();
                     allTask.add(links);
                     allLinks.add(attributeUrl);
