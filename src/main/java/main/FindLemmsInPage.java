@@ -1,20 +1,17 @@
 package main;
 
-import com.github.tsohr.JSONObject;
 import main.model.*;
 import org.apache.lucene.morphology.LuceneMorphology;
 import org.apache.lucene.morphology.russian.RussianLuceneMorphology;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RecursiveTask;
 
-public class IndexSites {
-
+public class FindLemmsInPage extends RecursiveTask<String> {
     private SiteRepository siteRepository;
     private PageRepository pageRepository;
     private LemmaRepository lemmaRepository ;
@@ -22,46 +19,48 @@ public class IndexSites {
 
     private DataProcessing dataProcessing;
 
-    public IndexSites(SiteRepository siteRepository, PageRepository pageRepository,
-                      LemmaRepository lemmaRepository, IndexRepository indexRepository) throws IOException {
+
+    List<Site> listSites;
+
+    String url;
+
+    public FindLemmsInPage(String url, SiteRepository siteRepository, PageRepository pageRepository,
+                           LemmaRepository lemmaRepository, IndexRepository indexRepository,
+                           DataProcessing dataProcessing) {
         this.siteRepository = siteRepository;
         this.pageRepository = pageRepository;
         this.lemmaRepository = lemmaRepository;
         this.indexRepository = indexRepository;
+        this.dataProcessing = dataProcessing;
+        this.url = url;
 
-        dataProcessing = new DataProcessing(siteRepository,pageRepository,
-                lemmaRepository,indexRepository);
 
-
-    }
-  //  public IndexSites() throws IOException {
-  //      findPage();
-  //      findLemms();
-  //  };
-
-    public void findLemms(String url) throws IOException {      // find lemms
-
-        List<Site> listSites = siteRepository.findAll();
-      //  List<Page> listPage = pageRepository.findAll();
-        List<Lemma> listLemms = lemmaRepository.findAll();
-
+        listSites = siteRepository.findAll();
 
         if (!url.equals("all")) {
             listSites = dataProcessing.findSite(url);
         }
 
+    }
+
+    @Override
+    protected String compute() {
+
         LuceneMorphology luceneMorph =
-                new RussianLuceneMorphology();
+                null;
+        try {
+            luceneMorph = new RussianLuceneMorphology();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         LemmaFinder lemmaFinder = new LemmaFinder(luceneMorph);
 
-        String siteMap = new ForkJoinPool().invoke(new FindLemmsInPage(url));
 
 
-/*
         for (Site site : listSites) {
             Long iSite = site.getId();
             var listPage = pageRepository.findBySite_id(iSite);
-          //  pageLemmas.clear();
+            //  pageLemmas.clear();
             for (Page page : listPage) {
 
                 String sText = page.getTitlepage().toString() + page.getContent();
@@ -131,62 +130,12 @@ public class IndexSites {
             } // page
         }  // site
 
- */
+        for (FindMap link : allTask) {
+            stringBuilder.append(link.join());
+        }
+
+
+
+        return null;
     }
-
-
-
-
-
-        public void findPage(String url) throws IOException {         // find page
-            var listSites = siteRepository.findAll();
-            if (!url.equals("all")) {
-                listSites = dataProcessing.findSite(url);
-            }
-
-            for (Site site : listSites) {
-
-                //      Optional<Site> site = siteRepository.findById(li);
-
-                if (site.getUrl() != null) {
-
-
-                   String siteMap = new ForkJoinPool().invoke(new FindMap(site, pageRepository));
-                  //  List <Page> pages = new ForkJoinPool().invoke(new FindMap(site, pageRepository));
-                    site.setLastError(siteMap);
-                    if (siteMap.equals("Все хорошо")) {
-                        site.setType("INDEXED");
-                    } else {
-                        site.setType("FAILED");
-                    };
-
-                    siteRepository.save(site);
-
-                    // System.out.println(siteMap);
-                    JSONObject result = new JSONObject();
-                    result.put("result", true);
-
-                } else {
-                    JSONObject result = new JSONObject();
-                    result.put("result", false);
-                    result.put("error", "Нет такого сайта !" + site.getUrl());
-                }
-            }
-            JSONObject result = new JSONObject();
-            result.put("result", false);
-            result.put("error", "Все прошло успешно");
-
-        }  // findPage
-
-       // return result.toString();
-    }
-
-
-
-
-
-
-
-
-
-
+}
