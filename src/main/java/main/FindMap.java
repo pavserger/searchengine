@@ -86,7 +86,7 @@ public class FindMap extends RecursiveTask<String> {
             for (Element element : elements) {
                 String attributeUrl = element.absUrl("href");//все ссылки сайта
 
-                System.out.println(attributeUrl);
+              //  System.out.println(attributeUrl);
 
                 if (attributeUrl.startsWith(url)
                         && !allLinks.isEmpty()
@@ -104,7 +104,7 @@ public class FindMap extends RecursiveTask<String> {
             }
         } catch (InterruptedException | IOException e) {
             e.printStackTrace();
-            System.out.println(url);
+           // System.out.println(url);
             String sOut = "Ошибка !!  " + e.toString() + " " + url;
             return sOut;
 

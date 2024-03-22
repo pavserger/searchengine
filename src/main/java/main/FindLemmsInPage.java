@@ -1,141 +1,249 @@
 package main;
 
+import lombok.Data;
 import main.model.*;
 import org.apache.lucene.morphology.LuceneMorphology;
 import org.apache.lucene.morphology.russian.RussianLuceneMorphology;
+import org.jsoup.nodes.Element;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.RecursiveTask;
 
+
+@Data
 public class FindLemmsInPage extends RecursiveTask<String> {
-    private SiteRepository siteRepository;
-    private PageRepository pageRepository;
-    private LemmaRepository lemmaRepository ;
-    private IndexRepository indexRepository;
+    private static SiteRepository siteRepository;
+    private static PageRepository pageRepository;
+    protected static  LemmaRepository lemmaRepository ;
+    protected static IndexRepository indexRepository;
 
     private DataProcessing dataProcessing;
 
+    private Site site;
 
-    List<Site> listSites;
+    private List <Page> listPage;
+
+    protected Page page;
+
+    Long iSite;
+
+    private Boolean first = true;
+
+
+    private List<Site> listSites;
 
     String url;
 
-    public FindLemmsInPage(String url, SiteRepository siteRepository, PageRepository pageRepository,
-                           LemmaRepository lemmaRepository, IndexRepository indexRepository,
-                           DataProcessing dataProcessing) {
+
+    //  private CopyOnWriteArraySet<Page> allLinks;//список всех ссылок
+
+
+    public FindLemmsInPage(Site site, SiteRepository siteRepository, PageRepository pageRepository,
+                           LemmaRepository lemmaRepository, IndexRepository indexRepository
+                           ) {
         this.siteRepository = siteRepository;
         this.pageRepository = pageRepository;
         this.lemmaRepository = lemmaRepository;
         this.indexRepository = indexRepository;
-        this.dataProcessing = dataProcessing;
-        this.url = url;
+        this.dataProcessing = new DataProcessing(siteRepository,pageRepository,lemmaRepository,
+                indexRepository);
+        this.site = site;
+
+       // Long iSite = site.getId();
+        //listPage = pageRepository.findBySite_id(iSite);
 
 
-        listSites = siteRepository.findAll();
+            first = true;
 
-        if (!url.equals("all")) {
-            listSites = dataProcessing.findSite(url);
-        }
 
     }
+
+
+    public FindLemmsInPage(Page page, Site site, SiteRepository siteRepository, PageRepository pageRepository,
+                           LemmaRepository lemmaRepository, IndexRepository indexRepository)
+     throws IOException {
+
+
+        this.siteRepository = siteRepository;
+        this.pageRepository = pageRepository;
+        this.lemmaRepository = lemmaRepository;
+        this.indexRepository = indexRepository;
+
+        this.site = site;
+
+        this.page = page;
+
+        first = false;
+
+
+    }
+
+
+
+
+   /*
+    public FindLemmsInPage(String url, SiteRepository siteRepository, PageRepository pageRepository,
+                           LemmaRepository lemmaRepository, IndexRepository indexRepository,
+                           DataProcessing dataProcessing) {
+*/
 
     @Override
     protected String compute() {
 
-        LuceneMorphology luceneMorph =
-                null;
         try {
-            luceneMorph = new RussianLuceneMorphology();
+            if (!first) {
+                writeLemms(page);
+                first = false;
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        FindLemmsInPage findLemmsInPage;
+
+        Long iSite = site.getId();
+        listPage = pageRepository.findBySite_id(iSite);
+
+        for (Page page: listPage) {
+            try {
+                findLemmsInPage = new FindLemmsInPage(page,site,siteRepository,pageRepository,
+                        lemmaRepository,indexRepository);
+                findLemmsInPage.fork();
+                System.out.println("page");
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            findLemmsInPage.join();
+        }
+       return  "Ok";
+    }
+
+    protected void writeLemms(Page page) throws IOException {
+        LuceneMorphology luceneMorph =
+                new RussianLuceneMorphology();
         LemmaFinder lemmaFinder = new LemmaFinder(luceneMorph);
 
+        String sText = page.getContent();
+        HashMap<String, Integer> listLemma = (HashMap<String, Integer>)
+                lemmaFinder.collectLemmas(sText);
+
+        //    Map<String, Integer> map = new HashMap<>();
+        Iterator mapIterator = listLemma.entrySet().iterator();
+        while (mapIterator.hasNext()) {
+            Map.Entry<String, Integer> entry = (Map.Entry<String, Integer>) mapIterator.next();
+            // заполнение массива лемм
+            String sKey = entry.getKey();
+            Integer iLemms = entry.getValue();
 
 
-        for (Site site : listSites) {
-            Long iSite = site.getId();
-            var listPage = pageRepository.findBySite_id(iSite);
-            //  pageLemmas.clear();
-            for (Page page : listPage) {
-
-                String sText = page.getTitlepage().toString() + page.getContent();
-                HashMap<String, Integer> listLemma = (HashMap<String, Integer>)
-                        lemmaFinder.collectLemmas(sText);
-
-                //    Map<String, Integer> map = new HashMap<>();
-                Iterator mapIterator = listLemma.entrySet().iterator();
-                while (mapIterator.hasNext()) {
-                    Map.Entry<String, Integer> entry = (Map.Entry<String, Integer>) mapIterator.next();
-                    // заполнение массива лемм
-                    String sKey = entry.getKey();
-                    Integer iLemms = entry.getValue();
+            if (sKey.length() >= 2) {
+                List<Lemma> lemmas = lemmaRepository.findBylemma(sKey); // будет заполняться
+                lemmas.clear();
+                List<Lemma> lemmas2 = lemmaRepository.findBylemma(sKey);
 
 
-                    if (sKey.length() >= 2) {
-                        // int num = entry.getValue();
-
-                        List<Lemma> lemmas = lemmaRepository.findBylemma(sKey); // будет заполняться
-                        lemmas.clear();
-                        List<Lemma> lemmas2 = lemmaRepository.findBylemma(sKey);
-
-
-                        for (Lemma lem : lemmas2) {
-                            if (lem.getSite().getId() == iSite) {
-                                lemmas.add(lem);
-                            }
-                        }
-
-                        if (lemmas.isEmpty()) {              // the  lemma is no present
-                            Lemma lemma = new Lemma();
-
-                            lemma.setSite(site);
-                            lemma.setLemma(sKey);
-                            lemma.setFrequency(iLemms);
-                            lemmaRepository.save(lemma);
-
-                            Index index = new Index();
-                            index.setLemma(lemma);
-                            float f = entry.getValue();
-                            index.setRank(f);
-                            index.setPage(page);
-
-                            indexRepository.save(index);
-
-
-                        } else {
-
-                            for (Lemma lem2 : lemmas) {  // the  lemma is present
-                                int fr = lem2.getFrequency() + iLemms;
-                                lem2.setFrequency(fr);
-                                lemmaRepository.save(lem2);
-
-                                Index index = new Index();
-                                index.setLemma(lem2);
-                                float f = entry.getValue();
-                                index.setRank(f);
-                                index.setPage(page);
-
-                                indexRepository.save(index);
-
-                            }
-                        }
-                    } // sKey > 2
+                for (Lemma lem : lemmas2) {
+                    if (lem.getSite().getId() == iSite) {
+                        lemmas.add(lem);
+                    }
                 }
 
-            } // page
-        }  // site
 
-        for (FindMap link : allTask) {
-            stringBuilder.append(link.join());
+                if (lemmas.isEmpty()) {              // the  lemma is no present
+                    Lemma lemma = new Lemma();
+
+                    lemma.setSite(site);
+                    lemma.setLemma(sKey);
+                    lemma.setFrequency(iLemms);
+                    lemmaRepository.save(lemma);
+
+                    Index index = new Index();
+                    index.setLemma(lemma);
+                    float f = entry.getValue();
+                    index.setRank(f);
+                    index.setPage(page);
+
+                    indexRepository.save(index);
+
+
+                } else {
+
+                    for (Lemma lem2 : lemmas) {  // the  lemma is present
+                        int fr = lem2.getFrequency() + iLemms;
+                        lem2.setFrequency(fr);
+                        lemmaRepository.save(lem2);
+
+                        Index index = new Index();
+                        index.setLemma(lem2);
+                        float f = entry.getValue();
+                        index.setRank(f);
+                        index.setPage(page);
+
+                        indexRepository.save(index);
+
+                    }
+                }
+
+
+
+
+            } // key > 2
+              /*
+                // int num = entry.getValue();
+
+                List<Lemma> lemmas = lemmaRepository.findBylemma(sKey); // будет заполняться
+                lemmas.clear();
+                List<Lemma> lemmas2 = lemmaRepository.findBylemma(sKey);
+
+
+                for (Lemma lem : lemmas2) {
+                    if (lem.getSite().getId() == iSite) {
+                        lemmas.add(lem);
+                    }
+                }
+
+                if (lemmas.isEmpty()) {              // the  lemma is no present
+                    Lemma lemma = new Lemma();
+
+                    lemma.setSite(site);
+                    lemma.setLemma(sKey);
+                    lemma.setFrequency(iLemms);
+                    lemmaRepository.save(lemma);
+
+                    Index index = new Index();
+                    index.setLemma(lemma);
+                    float f = entry.getValue();
+                    index.setRank(f);
+                    index.setPage(page);
+
+                    indexRepository.save(index);
+
+
+                } else {
+
+                    for (Lemma lem2 : lemmas) {  // the  lemma is present
+                        int fr = lem2.getFrequency() + iLemms;
+                        lem2.setFrequency(fr);
+                        lemmaRepository.save(lem2);
+
+                        Index index = new Index();
+                        index.setLemma(lem2);
+                        float f = entry.getValue();
+                        index.setRank(f);
+                        index.setPage(page);
+
+                        indexRepository.save(index);
+
+                    }
+                }
+
+                 */
+            } // sKey > 2
         }
 
-
-
-        return null;
     }
-}

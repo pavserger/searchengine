@@ -54,7 +54,10 @@ public class IndexSites {
                 new RussianLuceneMorphology();
         LemmaFinder lemmaFinder = new LemmaFinder(luceneMorph);
 
-        String siteMap = new ForkJoinPool().invoke(new FindLemmsInPage(url));
+        for (var site : listSites) {
+            String siteMap = new ForkJoinPool().invoke(new FindLemmsInPage(site,siteRepository,pageRepository,
+                    lemmaRepository,indexRepository));
+        }
 
 
 /*
