@@ -43,7 +43,7 @@ public class FindLemmsInPage extends RecursiveTask<String> {
     //  private CopyOnWriteArraySet<Page> allLinks;//список всех ссылок
 
 
-    public FindLemmsInPage(Site site, SiteRepository siteRepository, PageRepository pageRepository,
+    public  FindLemmsInPage(Site site, SiteRepository siteRepository, PageRepository pageRepository,
                            LemmaRepository lemmaRepository, IndexRepository indexRepository
                            ) {
         this.siteRepository = siteRepository;
@@ -97,7 +97,7 @@ public class FindLemmsInPage extends RecursiveTask<String> {
 
         try {
             if (!first) {
-                writeLemms(page);
+                writeLemms(site,page);
                 first = false;
             }
         } catch (IOException e) {
@@ -123,7 +123,7 @@ public class FindLemmsInPage extends RecursiveTask<String> {
        return  "Ok";
     }
 
-    protected void writeLemms(Page page) throws IOException {
+    private  synchronized  void writeLemms(Site site, Page page) throws IOException {
         LuceneMorphology luceneMorph =
                 new RussianLuceneMorphology();
         LemmaFinder lemmaFinder = new LemmaFinder(luceneMorph);
@@ -134,6 +134,9 @@ public class FindLemmsInPage extends RecursiveTask<String> {
 
         //    Map<String, Integer> map = new HashMap<>();
         Iterator mapIterator = listLemma.entrySet().iterator();
+
+        Long iSite = site.getId();
+
         while (mapIterator.hasNext()) {
             Map.Entry<String, Integer> entry = (Map.Entry<String, Integer>) mapIterator.next();
             // заполнение массива лемм
@@ -147,7 +150,7 @@ public class FindLemmsInPage extends RecursiveTask<String> {
                 List<Lemma> lemmas2 = lemmaRepository.findBylemma(sKey);
 
 
-                for (Lemma lem : lemmas2) {
+                for (Lemma lem : lemmas2) {                // site
                     if (lem.getSite().getId() == iSite) {
                         lemmas.add(lem);
                     }
@@ -188,9 +191,6 @@ public class FindLemmsInPage extends RecursiveTask<String> {
 
                     }
                 }
-
-
-
 
             } // key > 2
               /*
