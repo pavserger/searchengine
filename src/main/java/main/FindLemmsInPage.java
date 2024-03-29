@@ -81,6 +81,8 @@ public class FindLemmsInPage extends RecursiveTask<String> {
 
         first = false;
 
+        this.listPage =listPage;
+
 
     }
 
@@ -105,28 +107,36 @@ public class FindLemmsInPage extends RecursiveTask<String> {
 
             } else
                 if (listPage.size() == 1) {
-                page = listPage.get(0);
-                writeLemms(site,page);
-                listPage.remove(page);
-                System.out.println(page.getTitle().toString());
-            }
-            else {
-                List <Page> listPage2 = new ArrayList<Page>();
-                Page p = listPage.get(0);
-                listPage2.add(p);
-                FindLemmsInPage findLemmsInPage = new FindLemmsInPage(listPage2, site, siteRepository, pageRepository,
+                     page = listPage.get(0);
+                        writeLemms(site,page);
+                        listPage.remove(page);
+                     System.out.println(page.getTitle().toString());
+            } else {
+                        List <Page> listPage2 = new ArrayList<Page>();
+                        Page p = listPage.get(0);
+                        listPage2.add(p);
+                          FindLemmsInPage findLemmsInPage = new FindLemmsInPage(listPage2, site, siteRepository, pageRepository,
                         lemmaRepository, indexRepository);
-                FindLemmsInPage findLemmsInPage2 = new FindLemmsInPage(listPage, site, siteRepository, pageRepository,
+                    listPage.remove(p);
+                          FindLemmsInPage findLemmsInPage2 = new FindLemmsInPage(listPage, site, siteRepository, pageRepository,
                         lemmaRepository, indexRepository);
 
-                FindLemmsInPage.inForkJoinPool();
+                           findLemmsInPage2.fork();
+                           findLemmsInPage.fork();
 
-                }
+                    findLemmsInPage2.join();
+                    findLemmsInPage.join();
+
+
+
+                    //   FindLemmsInPage.inForkJoinPool();
+
+                  }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-       return  "Ok";
+       return  "";
     }
 
     private  synchronized  void writeLemms(Site site, Page page) throws IOException {
