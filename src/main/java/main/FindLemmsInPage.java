@@ -7,10 +7,7 @@ import org.apache.lucene.morphology.russian.RussianLuceneMorphology;
 import org.jsoup.nodes.Element;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.RecursiveTask;
 
@@ -39,6 +36,8 @@ public class FindLemmsInPage extends RecursiveTask<String> {
 
     String url;
 
+    int iPage = 0;
+
 
     //  private CopyOnWriteArraySet<Page> allLinks;//список всех ссылок
 
@@ -60,11 +59,13 @@ public class FindLemmsInPage extends RecursiveTask<String> {
 
             first = true;
 
+            this.listPage = pageRepository.findAll();
+
 
     }
 
 
-    public FindLemmsInPage(Page page, Site site, SiteRepository siteRepository, PageRepository pageRepository,
+    public FindLemmsInPage(List <Page> listPage, Site site, SiteRepository siteRepository, PageRepository pageRepository,
                            LemmaRepository lemmaRepository, IndexRepository indexRepository)
      throws IOException {
 
@@ -96,30 +97,35 @@ public class FindLemmsInPage extends RecursiveTask<String> {
     protected String compute() {
 
         try {
-            if (!first) {
+            if (listPage.size() == 0) {
+
+                System.out.println("end");
+
+                return "end";
+
+            } else
+                if (listPage.size() == 1) {
+                page = listPage.get(0);
                 writeLemms(site,page);
-                first = false;
+                listPage.remove(page);
+                System.out.println(page.getTitle().toString());
             }
+            else {
+                List <Page> listPage2 = new ArrayList<Page>();
+                Page p = listPage.get(0);
+                listPage2.add(p);
+                FindLemmsInPage findLemmsInPage = new FindLemmsInPage(listPage2, site, siteRepository, pageRepository,
+                        lemmaRepository, indexRepository);
+                FindLemmsInPage findLemmsInPage2 = new FindLemmsInPage(listPage, site, siteRepository, pageRepository,
+                        lemmaRepository, indexRepository);
+
+                FindLemmsInPage.inForkJoinPool();
+
+                }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        FindLemmsInPage findLemmsInPage;
 
-        Long iSite = site.getId();
-        listPage = pageRepository.findBySite_id(iSite);
-
-        for (Page page: listPage) {
-            try {
-                findLemmsInPage = new FindLemmsInPage(page,site,siteRepository,pageRepository,
-                        lemmaRepository,indexRepository);
-                findLemmsInPage.fork();
-                System.out.println("page");
-
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            findLemmsInPage.join();
-        }
        return  "Ok";
     }
 
@@ -131,6 +137,9 @@ public class FindLemmsInPage extends RecursiveTask<String> {
         String sText = page.getContent();
         HashMap<String, Integer> listLemma = (HashMap<String, Integer>)
                 lemmaFinder.collectLemmas(sText);
+
+        iPage = iPage+1;
+        System.out.println(iPage + " page: "+ page.getId());
 
         //    Map<String, Integer> map = new HashMap<>();
         Iterator mapIterator = listLemma.entrySet().iterator();
@@ -170,7 +179,6 @@ public class FindLemmsInPage extends RecursiveTask<String> {
                     float f = entry.getValue();
                     index.setRank(f);
                     index.setPage(page);
-
                     indexRepository.save(index);
 
 

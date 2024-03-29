@@ -39,7 +39,7 @@ public class IndexSites {
   //      findLemms();
   //  };
 
-    public void findLemms(String url) throws IOException {      // find lemms
+    public void findLemmas(String url) throws IOException {      // find lemms
 
         List<Site> listSites = siteRepository.findAll();
       //  List<Page> listPage = pageRepository.findAll();
@@ -50,9 +50,9 @@ public class IndexSites {
             listSites = dataProcessing.findSite(url);
         }
 
-        LuceneMorphology luceneMorph =
-                new RussianLuceneMorphology();
-        LemmaFinder lemmaFinder = new LemmaFinder(luceneMorph);
+   //     LuceneMorphology luceneMorph =
+    //            new RussianLuceneMorphology();
+    //    LemmaFinder lemmaFinder = new LemmaFinder(luceneMorph);
 
         for (var site : listSites) {
             String siteMap = new ForkJoinPool().invoke(new FindLemmsInPage(site,siteRepository,pageRepository,

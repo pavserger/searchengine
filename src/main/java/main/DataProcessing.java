@@ -148,14 +148,20 @@ import java.util.Map;
 
 
     public List<Site> findSite(String url) {
-        var listSites = siteRepository.findAll();
-        var listSites2 = siteRepository.findAll();
-        listSites2.clear();
-        for (var site : listSites) {
-            if (site.getUrl().contains(url)) {
-                listSites2.add(site);
+
+        if (!url.equals("all")) {
+            var listSites = siteRepository.findAll();
+            var listSites2 = siteRepository.findAll();
+            listSites2.clear();
+            for (var site : listSites) {
+                if (site.getUrl().contains(url)) {
+                    listSites2.add(site);
+                }
             }
+            return listSites2;
+        }else {
+            var listSites2 = siteRepository.findAll();
+            return listSites2;
         }
-        return listSites2;
     }
 }

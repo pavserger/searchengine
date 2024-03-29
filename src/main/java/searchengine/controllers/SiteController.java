@@ -110,7 +110,7 @@ public class SiteController {
                lemmaRepository, indexRepository);
 
         indexSites.findPage("all");
-        indexSites.findLemms("all");
+        indexSites.findLemmas("all");
 
         JSONObject result = new JSONObject();
         result.put("result", false);
@@ -141,8 +141,8 @@ public class SiteController {
             // GetStatistics getStatistics = new GetStatistics(siteRepository,pageRepository,
             //         lemmaRepository,indexRepository);
             //          getStatistics.sinchronData( testSites);
-            indexSites.findPage(url);
-            indexSites.findLemms("all");
+            //indexSites.findPage(url);
+            indexSites.findLemmas("all");
 
 
         }else {
@@ -161,11 +161,13 @@ public class SiteController {
     {
         Search search = new Search(siteRepository, pageRepository,
                 lemmaRepository, indexRepository);
-       String result = search.serchLemms(query);
-        return result.toString();
+        String result = "";
+        for (var findSite : siteRepository.findAll() ) {
+            Long iSite = findSite.getId();
+          result = search.serchLemmas(query,iSite);
+        }
 
-
-       // return "ok";
+        return result;
     }
 
 }
