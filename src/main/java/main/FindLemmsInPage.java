@@ -110,7 +110,7 @@ public class FindLemmsInPage extends RecursiveTask<String> {
                      page = listPage.get(0);
                         writeLemms(site,page);
                         listPage.remove(page);
-                     System.out.println(page.getTitle().toString());
+                   //  System.out.println(page.getTitle().toString());
             } else {
                         List <Page> listPage2 = new ArrayList<Page>();
                         Page p = listPage.get(0);
@@ -148,8 +148,8 @@ public class FindLemmsInPage extends RecursiveTask<String> {
         HashMap<String, Integer> listLemma = (HashMap<String, Integer>)
                 lemmaFinder.collectLemmas(sText);
 
-        iPage = iPage+1;
-        System.out.println(iPage + " page: "+ page.getId());
+     //   iPage = iPage+1;
+     //   System.out.println(iPage + " page: "+ page.getId());
 
         //    Map<String, Integer> map = new HashMap<>();
         Iterator mapIterator = listLemma.entrySet().iterator();

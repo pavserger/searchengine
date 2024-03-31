@@ -134,13 +134,21 @@ public class Search {
 
         List<Lemma> lemmas = lemmaRepository.findBylemma(sQuery);
         int lem = 0;
+
+        ArrayList <Integer> listLemmas = new ArrayList<Integer>();
+
         for (Lemma lemma : lemmas) {
             lem = lemma.getId();
+
+            listLemmas.add(lemma.getId());
         }
         Lemma l = lemmas.get(0);
 
+        indexList = indexRepository.findByLemmas_id(listLemmas);
 
         indexList = indexRepository.findBylemma_id(l.getId());  //list page
+
+
 
 
 //          при наличии других лемм провести пересечение
