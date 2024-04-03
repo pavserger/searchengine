@@ -166,12 +166,22 @@ public class Search {
             sQ = sQ+ ";";
 
             if (!sQ.equals(";")) {
+
+                String url = "jdbc:mysql://localhost:3306/";
+                String usr = "root";
+                String pass = "pass4MySQL";
+
+
+                SQLClass sqlClass = new SQLClass();
+                sqlClass.query();
+
+                /*
                 System.out.println("Search.findlistpage !!"+ sQ);
                  List<Index> indexList2 = new ArrayList<>();
                  sQ = "SELECT * FROM search_engine.index;";
                 indexList2 = indexRepository.findByLemmas_id(sQ);
                 System.out.println("Search.findlistpage");
-
+*/
             }
 
 /*

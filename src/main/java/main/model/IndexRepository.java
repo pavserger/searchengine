@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface IndexRepository extends JpaRepository<Index, Long> {
 
-    public final static String myQuery = "SELECT * FROM search_engine.index";
+    // public final static String myQuery = "SELECT * FROM search_engine.index";
 
     List<Index> findBylemma_id (int lemma_id);
 
@@ -27,10 +27,10 @@ public interface IndexRepository extends JpaRepository<Index, Long> {
 */
 
 
-    @Query(myQuery
-         //   value = ":sQuery"
+    @Query(
+            value = ":sQuery"
            // value = ("select * from ?1")
-           // ,nativeQuery = true
+            ,nativeQuery = true
     )
     List<Index> findByLemmas_id( String sQuery);
 
