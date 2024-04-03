@@ -8,6 +8,7 @@ import main.model.*;
 import org.apache.lucene.morphology.LuceneMorphology;
 import org.apache.lucene.morphology.russian.RussianLuceneMorphology;
 
+import javax.management.Query;
 import java.io.IOException;
 import java.util.*;
 
@@ -28,7 +29,7 @@ public class Search {
 
     private SortedMap<Integer, String> sortedLemmas = new TreeMap<>(); // sortet lemmas
 
-    private Map<String, Integer> orderLemmas = new HashMap<String, Integer>(); //  orderLemmas
+    private Map<String, Integer> orderLemmas = new HashMap<String, Integer>();       //  orderLemmas
 
     private Long siteID;
 
@@ -56,7 +57,7 @@ public class Search {
 
         getListLemmas(sQuery);
 
-        sortListLemmas();
+        //sortListLemmas();
 
         findListPage();
 
@@ -83,7 +84,7 @@ public class Search {
 
     }
 
-    public void geCotnfig(Map<String, String> testSites) {
+    public void getCotnfig(Map<String, String> testSites) {
         this.testSites = testSites;
     }
 
@@ -124,29 +125,68 @@ public class Search {
 
 
     public void findListPage() {
+        Iterator mapIterator = listLemmas4Find.entrySet().iterator();
+        List <String>  listFindLemmas = new ArrayList<>();
+        while (mapIterator.hasNext()) {
+            Map.Entry<String, Integer> entry = (Map.Entry<String, Integer>) mapIterator.next();
+            // заполнение массива леммами
+            String lemma = entry.getKey();
+            Integer iLemmas = entry.getValue();
+            listFindLemmas.add(lemma);
 
-        // Iterating over the elements of the sorted map
-
-
-        for (Integer key : sortedLemmas.keySet()) {
-            sQuery = sortedLemmas.get(key);
         }
 
-        List<Lemma> lemmas = lemmaRepository.findBylemma(sQuery);
-        int lem = 0;
+         //   var listLemmasFind = lemmaRepository.findBylemma(lemma);
 
-        ArrayList <Integer> listLemmas = new ArrayList<Integer>();
+        if (listFindLemmas.size() == 1) {
+            List<Lemma> lemmas = lemmaRepository.findBylemma(listFindLemmas.get(0));
+            Lemma l = lemmas.get(0);
+            indexList = indexRepository.findBylemma_id(l.getId()); //list page
+        } else {   // string query and query
+            String stringQuery = "";
+            String s = "";
+            int num = 0;
+         //   ArrayList<Integer> listLemmasIndex = new ArrayList<Integer>();
+            String sQ = "select * FROM search_engine.index WHERE page_id IN";
+            for (var nameLemma : listFindLemmas) {
+                List<Lemma> lemmas = lemmaRepository.findBylemma(nameLemma);
+                if (lemmas.size() == 1) {
+                    int indexLemma = lemmas.get(0).getId();
+                    if (num == 0) {
+                        sQ = sQ+ "(SELECT page_id FROM search_engine.index where lemma_id =" + indexLemma + ")";
+                    } else {
+                        sQ = sQ + "and page_id IN (SELECT page_id FROM search_engine.index where lemma_id = " + indexLemma + ")";
+                    } ;
+                }
+                num ++;
+                //       listLemmasIndex.add(lemmas.get(0).getId());
+            }
 
-        for (Lemma lemma : lemmas) {
-            lem = lemma.getId();
 
-            listLemmas.add(lemma.getId());
+            sQ = sQ+ ";";
+
+            if (!sQ.equals(";")) {
+                System.out.println("Search.findlistpage !!"+ sQ);
+                 List<Index> indexList2 = new ArrayList<>();
+                 sQ = "SELECT * FROM search_engine.index;";
+                indexList2 = indexRepository.findByLemmas_id(sQ);
+                System.out.println("Search.findlistpage");
+
+            }
+
+/*
+            SELECT * FROM search_engine.index
+            WHERE page_id IN (SELECT page_id FROM search_engine.index where lemma_id = 433)
+            and page_id IN (SELECT page_id FROM search_engine.index where lemma_id = 789)
+            and page_id IN (SELECT page_id FROM search_engine.index where lemma_id = 464)
+            and page_id IN (SELECT page_id FROM search_engine.index where lemma_id = 266);
+*/
+
         }
-        Lemma l = lemmas.get(0);
 
-        indexList = indexRepository.findByLemmas_id(listLemmas);
 
-        indexList = indexRepository.findBylemma_id(l.getId());  //list page
+
+
 
 
 

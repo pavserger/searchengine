@@ -13,7 +13,7 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
     hibernate:
       ddl-auto: update
-    show-sql: false
+    show-sql: true
 indexing-settings:
   sites:
     - url: https://dombulgakova.ru/
