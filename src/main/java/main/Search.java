@@ -38,7 +38,6 @@ public class Search {
     String sQuery = "";
 
 
-
     public Search(SiteRepository siteRepository,
                   PageRepository pageRepository,
                   LemmaRepository lemmaRepository,
@@ -51,7 +50,7 @@ public class Search {
 
     }
 
-    public String serchLemmas (String sQuery, Long iSite) throws IOException {
+    public String serchLemmas(String sQuery, Long iSite) throws IOException {
 
         this.siteID = iSite;
 
@@ -126,7 +125,7 @@ public class Search {
 
     public void findListPage() {
         Iterator mapIterator = listLemmas4Find.entrySet().iterator();
-        List <String>  listFindLemmas = new ArrayList<>();
+        List<String> listFindLemmas = new ArrayList<>();
         while (mapIterator.hasNext()) {
             Map.Entry<String, Integer> entry = (Map.Entry<String, Integer>) mapIterator.next();
             // заполнение массива леммами
@@ -136,7 +135,7 @@ public class Search {
 
         }
 
-         //   var listLemmasFind = lemmaRepository.findBylemma(lemma);
+        //   var listLemmasFind = lemmaRepository.findBylemma(lemma);
 
         if (listFindLemmas.size() == 1) {
             List<Lemma> lemmas = lemmaRepository.findBylemma(listFindLemmas.get(0));
@@ -146,25 +145,29 @@ public class Search {
             String stringQuery = "";
             String s = "";
             int num = 0;
-         //   ArrayList<Integer> listLemmasIndex = new ArrayList<Integer>();
+            //   ArrayList<Integer> listLemmasIndex = new ArrayList<Integer>();
             String sQ = "select * FROM search_engine.index WHERE page_id IN";
             for (var nameLemma : listFindLemmas) {
                 List<Lemma> lemmas = lemmaRepository.findBylemma(nameLemma);
                 if (lemmas.size() == 1) {
                     int indexLemma = lemmas.get(0).getId();
                     if (num == 0) {
-                        sQ = sQ+ "(SELECT page_id FROM search_engine.index where lemma_id =" + indexLemma + ")";
+                        sQ = sQ + "(SELECT page_id FROM search_engine.index where lemma_id =" + indexLemma + ")";
                     } else {
                         sQ = sQ + "and page_id IN (SELECT page_id FROM search_engine.index where lemma_id = " + indexLemma + ")";
-                    } ;
+                    }
+                    ;
                 }
-                num ++;
+                num++;
                 //       listLemmasIndex.add(lemmas.get(0).getId());
             }
 
 
-            sQ = sQ+ ";";
+            sQ = sQ + ";";
 
+            indexList = indexRepository.retrieveMultipleRecords();
+            System.out.println("Search" + "Indxlist");
+/*
             if (!sQ.equals(";")) {
 
                 String url = "jdbc:mysql://localhost:3306/";
@@ -181,8 +184,8 @@ public class Search {
                  sQ = "SELECT * FROM search_engine.index;";
                 indexList2 = indexRepository.findByLemmas_id(sQ);
                 System.out.println("Search.findlistpage");
-*/
-            }
+
+        }
 
 /*
             SELECT * FROM search_engine.index
@@ -192,7 +195,8 @@ public class Search {
             and page_id IN (SELECT page_id FROM search_engine.index where lemma_id = 266);
 */
 
-        }
+    }
+}
 
 
 
@@ -204,7 +208,7 @@ public class Search {
 //          при наличии других лемм провести пересечение
 
 
-    }
+
 
 
     public JSONArray formResult() throws IOException {
