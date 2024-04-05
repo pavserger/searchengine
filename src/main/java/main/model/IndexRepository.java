@@ -34,8 +34,8 @@ public interface IndexRepository extends JpaRepository<Index, Long> {
     @Transactional
     public default List<Index> retrieveMultipleRecords() {
 
-        Enti entityManagerInstance;
-        DataSource ds = entityManagerInstance.someFunctionThatReturnsADataSourceOrConnection();
+      //  Enti entityManagerInstance = null;
+       // DataSource ds = entityManagerInstance.someFunctionThatReturnsADataSourceOrConnection();
         JdbcTemplate jdbcTemplate = new JdbcTemplate();
 
         String sql = "SELECT * FROM search_engine.index";
