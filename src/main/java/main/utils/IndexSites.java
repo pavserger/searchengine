@@ -1,16 +1,12 @@
-package main;
+package main.utils;
 
 import com.github.tsohr.JSONObject;
+import main.loadbd.FindLemmsInPage;
+import main.loadbd.FindMap;
 import main.model.*;
-import org.apache.lucene.morphology.LuceneMorphology;
-import org.apache.lucene.morphology.russian.RussianLuceneMorphology;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ForkJoinPool;
 
 public class IndexSites {

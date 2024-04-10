@@ -1,14 +1,14 @@
-package main;
+package main.loadbd;
 
 import lombok.Data;
+import main.findinbd.LemmaFinder;
 import main.model.*;
+import main.utils.DataProcessing;
 import org.apache.lucene.morphology.LuceneMorphology;
 import org.apache.lucene.morphology.russian.RussianLuceneMorphology;
-import org.jsoup.nodes.Element;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.RecursiveTask;
 
 

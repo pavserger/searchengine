@@ -1,23 +1,20 @@
 package main.controllers;
 
 //import com.github.tsohr.JSONArray;
-import com.github.tsohr.JSONArray;
 import com.github.tsohr.JSONObject;
 import lombok.Data;
-import main.*;
 
 import main.model.*;
-import main.searchengine.GetStatistics;
-import org.apache.lucene.morphology.LuceneMorphology;
-import org.apache.lucene.morphology.russian.RussianLuceneMorphology;
+import main.utils.GetStatistics;
+import main.utils.DataProcessing;
+import main.utils.IndexSites;
+import main.utils.Search;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.ForkJoinPool;
 
 @RestController
 

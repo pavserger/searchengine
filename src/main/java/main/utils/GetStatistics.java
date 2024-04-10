@@ -1,4 +1,4 @@
-package main.searchengine;
+package main.utils;
 
 import com.github.tsohr.JSONArray;
 import com.github.tsohr.JSONObject;

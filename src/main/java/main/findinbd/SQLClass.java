@@ -1,30 +1,27 @@
-package main;
+package main.findinbd;
 
 import lombok.Data;
-import lombok.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import main.utils.GetDataSource;
 import org.springframework.stereotype.Component;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import org.springframework.beans.factory.annotation.*;
 
-@ConfigurationProperties(prefix = "spring")
+//@ConfigurationProperties(prefix = "spring")
 @Component
 @Data
+//@Value
 public class SQLClass {
     private HashMap <String,String> datasource;
+//
+ //   @Value("${username}")
+ //   private String username;
 
 
-    String url = "";
+
+    //String url = "";
     //   String url = "jdbc:mysql://localhost:3306/skillbox?useSSL=false&serverTimezone=UTC";
-    String usr = "";
-    String pass = "";
+   // String usr = "";
+    //String pass = "";
 
     /*
     spring:
@@ -46,13 +43,32 @@ public class SQLClass {
    Map<String, String> addresses;
 }
 */
-
+    String username;
+    String password;
+    String url;
 
     public SQLClass() {
+
+    }
+
+    public SQLClass(String username, String password, String url) {
+        this.url = url;
+        this.username = username ;
+        this.password = password ;
+
+
     }
     public void getDataConnection() {
 
-     //   Map<String, String> connect = new HashMap<String, String>(); //  load list sites from application.yaml
+
+       // GetDataSource dataSource = new GetDataSource();
+        System.out.println(username);
+        System.out.println(password);
+        System.out.println(url);
+
+
+
+        //   Map<String, String> connect = new HashMap<String, String>(); //  load list sites from application.yaml
 
 /*
         for (var mapSites : datasource.entrySet()) {
@@ -77,6 +93,7 @@ public class SQLClass {
 
         System.out.println("Hi MySQL");
 
+
         getDataConnection();
 
  /*
@@ -84,7 +101,7 @@ public class SQLClass {
         //   String url = "jdbc:mysql://localhost:3306/skillbox?useSSL=false&serverTimezone=UTC";
         String usr = "root";
         String pass = "pass4MySQL";
- */
+
 
         try {
             Connection connection = DriverManager.getConnection(url, usr, pass);
@@ -108,6 +125,8 @@ public class SQLClass {
         } catch (Exception ex) {
             ex.printStackTrace();
         };
+
+  */
 
     }
 }

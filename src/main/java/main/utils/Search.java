@@ -1,14 +1,15 @@
-package main;
+package main.utils;
 
 import com.github.tsohr.JSONArray;
 import com.github.tsohr.JSONObject;
 
 import lombok.Data;
+import main.findinbd.LemmaFinder;
+import main.findinbd.SQLClass;
 import main.model.*;
 import org.apache.lucene.morphology.LuceneMorphology;
 import org.apache.lucene.morphology.russian.RussianLuceneMorphology;
 
-import javax.management.Query;
 import java.io.IOException;
 import java.util.*;
 
@@ -165,8 +166,12 @@ public class Search {
 
             sQ = sQ + ";";
 
-            indexList = indexRepository.retrieveMultipleRecords();
+         //   indexList = indexRepository.retrieveMultipleRecords();
             System.out.println("Search" + "Indxlist");
+
+            SQLClass sqlClass = new SQLClass();
+            sqlClass.query();
+
 /*
             if (!sQ.equals(";")) {
 

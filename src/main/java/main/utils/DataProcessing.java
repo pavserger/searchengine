@@ -1,4 +1,4 @@
-package main;
+package main.utils;
 
 import lombok.Data;
 import main.model.*;
