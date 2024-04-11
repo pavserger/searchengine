@@ -43,28 +43,16 @@ public class SQLClass {
    Map<String, String> addresses;
 }
 */
-    String username;
-    String password;
-    String url;
-
-    public SQLClass() {
-
-    }
-
-    public SQLClass(String username, String password, String url) {
-        this.url = url;
-        this.username = username ;
-        this.password = password ;
 
 
-    }
     public void getDataConnection() {
 
 
-       // GetDataSource dataSource = new GetDataSource();
-        System.out.println(username);
-        System.out.println(password);
-        System.out.println(url);
+        GetDataSource dataSource = new GetDataSource();
+
+        System.out.println(dataSource.getUsername());
+        System.out.println(dataSource.getUrl());
+        System.out.println(dataSource.getPassword());
 
 
 
