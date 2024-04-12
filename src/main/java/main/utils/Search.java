@@ -147,7 +147,7 @@ public class Search {
             String s = "";
             int num = 0;
             //   ArrayList<Integer> listLemmasIndex = new ArrayList<Integer>();
-            String sQ = "select distinct page_id  FROM search_engine.index WHERE page_id IN";
+            String sQ = "select *  FROM search_engine.index WHERE page_id IN";
             for (var nameLemma : listFindLemmas) {
                 List<Lemma> lemmas = lemmaRepository.findBylemma(nameLemma);
                 if (lemmas.size() == 1) {
@@ -169,12 +169,8 @@ public class Search {
             //   indexList = indexRepository.retrieveMultipleRecords();
             System.out.println("Search:    " + sQ);
 
-            SQLClass sqlClass = new SQLClass();
-            List <Integer> pageList =  sqlClass.query(sQ);
-            for (var numPage : pageList ) {
-                int i = new Integer(numPage);
-                indexList = indexRepository.findByPage_id(i);
-            }
+            SQLClass sqlClass = new SQLClass(siteRepository,pageRepository,lemmaRepository,indexRepository);
+            indexList =  sqlClass.query(sQ);
 
         }
 

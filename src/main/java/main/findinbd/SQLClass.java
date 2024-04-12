@@ -1,6 +1,7 @@
 package main.findinbd;
 
 import lombok.Data;
+import main.model.*;
 import main.utils.DataProcessing;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +20,23 @@ import java.util.List;
 public class SQLClass {
     private HashMap <String,String> datasource;
 
-    public List <Integer>  query(String sQ) {
+    private SiteRepository siteRepository;
+    private PageRepository pageRepository;
+    private LemmaRepository lemmaRepository;
+    private IndexRepository indexRepository;
+
+    public SQLClass(SiteRepository siteRepository, PageRepository pageRepository,
+                    LemmaRepository lemmaRepository, IndexRepository indexRepository) {
+        this.siteRepository = siteRepository;
+        this.pageRepository = pageRepository;
+        this.lemmaRepository = lemmaRepository;
+        this.indexRepository = indexRepository;
+    }
+
+    private List<Index> indexList;
+    private Index index;
+
+    public List <Index>  query(String sQ) {
 
 
         DataProcessing dataProcessing = new DataProcessing();
@@ -44,9 +61,25 @@ public class SQLClass {
             var page_id = resultQury.getInt("page_id");
             System.out.println("SQLClass");
 
+            indexList = new ArrayList<>();
+
             while (resultQury.next()) {
                 System.out.println(id+" !  "+rank+" !  "+ lemma_id+"!"+ page_id );
-                pageList.add(new Integer(page_id));
+               // pageList.add(new Integer(page_id));
+                index = new Index();
+                index.setId(id);
+                index.setRank(rank);
+
+               // long l = page_id;
+                var listPageFind = pageRepository.findById(page_id);
+                index.setPage(listPageFind.get());
+
+               // long l2 = lemma_id;
+                var listLemmasFind = lemmaRepository.findById(lemma_id);
+                index.setLemma(listLemmasFind.get());
+
+                indexList.add(index);
+
             }
 
 
@@ -56,7 +89,7 @@ public class SQLClass {
         };
 
 
-        return pageList;
+        return indexList;
     }
 }
 
