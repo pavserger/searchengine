@@ -147,7 +147,7 @@ public class Search {
             String s = "";
             int num = 0;
             //   ArrayList<Integer> listLemmasIndex = new ArrayList<Integer>();
-            String sQ = "select * FROM search_engine.index WHERE page_id IN";
+            String sQ = "select distinct page_id  FROM search_engine.index WHERE page_id IN";
             for (var nameLemma : listFindLemmas) {
                 List<Lemma> lemmas = lemmaRepository.findBylemma(nameLemma);
                 if (lemmas.size() == 1) {
@@ -166,56 +166,22 @@ public class Search {
 
             sQ = sQ + ";";
 
-         //   indexList = indexRepository.retrieveMultipleRecords();
-            System.out.println("Search" + "Indxlist");
+            //   indexList = indexRepository.retrieveMultipleRecords();
+            System.out.println("Search:    " + sQ);
 
             SQLClass sqlClass = new SQLClass();
-            sqlClass.query();
-
-/*
-            if (!sQ.equals(";")) {
-
-                String url = "jdbc:mysql://localhost:3306/";
-                String usr = "root";
-                String pass = "pass4MySQL";
-
-
-                SQLClass sqlClass = new SQLClass();
-                sqlClass.query();
-
-                /*
-                System.out.println("Search.findlistpage !!"+ sQ);
-                 List<Index> indexList2 = new ArrayList<>();
-                 sQ = "SELECT * FROM search_engine.index;";
-                indexList2 = indexRepository.findByLemmas_id(sQ);
-                System.out.println("Search.findlistpage");
+            List <Integer> pageList =  sqlClass.query(sQ);
+            for (var numPage : pageList ) {
+                int i = new Integer(numPage);
+                indexList = indexRepository.findByPage_id(i);
+            }
 
         }
 
-/*
-            SELECT * FROM search_engine.index
-            WHERE page_id IN (SELECT page_id FROM search_engine.index where lemma_id = 433)
-            and page_id IN (SELECT page_id FROM search_engine.index where lemma_id = 789)
-            and page_id IN (SELECT page_id FROM search_engine.index where lemma_id = 464)
-            and page_id IN (SELECT page_id FROM search_engine.index where lemma_id = 266);
-*/
-
     }
-}
-
-
-
-
-
-
 
 
 //          при наличии других лемм провести пересечение
-
-
-
-
-
     public JSONArray formResult() throws IOException {
         String strText = "";
         String title = "";

@@ -20,7 +20,7 @@ public interface IndexRepository extends JpaRepository<Index, Long> {
 
     List<Index> findBylemma_id(int lemma_id);
 
-  //  List<Index> findByLemmas_id(String sQuery);
+    List<Index> findByPage_id(int  page_id);
 }
 
 

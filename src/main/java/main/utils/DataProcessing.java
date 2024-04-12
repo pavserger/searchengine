@@ -14,10 +14,10 @@ import java.util.Map;
  //@Component
 // @ConfigurationProperties(prefix = "indexing-settings")
 
- public class DataProcessing {
-        public String user;
-        public String password;
-        public String url;
+ public  class DataProcessing {
+        public static String user;
+        public static String password;
+        public static String url;
 
     private SiteRepository siteRepository;
     private PageRepository pageRepository;
@@ -28,7 +28,12 @@ import java.util.Map;
 
     Map<String, String> testSites = new HashMap<String, String>(); //  load list sites from application.yaml
 
+     public DataProcessing () {
+         this.user = user;
+         this.password = password;
+         this.url = url;
 
+     };
     public DataProcessing(SiteRepository siteRepository,
                           PageRepository pageRepository,
                           LemmaRepository lemmaRepository,
