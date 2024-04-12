@@ -15,6 +15,9 @@ import java.util.Map;
 // @ConfigurationProperties(prefix = "indexing-settings")
 
  public class DataProcessing {
+        public String user;
+        public String password;
+        public String url;
 
     private SiteRepository siteRepository;
     private PageRepository pageRepository;
@@ -93,10 +96,12 @@ import java.util.Map;
      }
 
 
+     public void putCotnfig(String user,String password,String url)  {
 
-
-
-
+        this.user = user;
+        this.password = password;
+        this.url = url;
+     }
 
 
      public void geCotnfig( Map<String, String> testSites)  {

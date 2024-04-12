@@ -1,6 +1,8 @@
 package main.controllers;
 
 //import com.github.tsohr.JSONArray;
+
+import org.springframework.beans.factory.annotation.Value;
 import com.github.tsohr.JSONObject;
 import lombok.Data;
 
@@ -9,6 +11,8 @@ import main.utils.GetStatistics;
 import main.utils.DataProcessing;
 import main.utils.IndexSites;
 import main.utils.Search;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +42,23 @@ public class SiteController {
 
 
     private DataProcessing dataProcessing;
+
+
+    @Value("${spring.datasource.username}")
+    String username;
+
+    @Value("${spring.datasource.password}")
+    private String password;
+
+    @Value("${spring.datasource.url}")
+    private String url;
+
+
+
+
+
+
+
 
 
     //   private LemmaRepository lemmaRepository;
@@ -77,6 +98,9 @@ public class SiteController {
         }
 
         dataProcessing.geCotnfig(testSites);
+
+        dataProcessing.putCotnfig(username,password,url);
+
         return "OK";
     }
 
