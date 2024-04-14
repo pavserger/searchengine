@@ -34,9 +34,12 @@ public class Search {
 
     private Long siteID;
 
-    private List<Index> indexList;
+    private List<Integer> indexList;
 
     String sQuery = "";
+
+    List<String> listFindLemmas = new ArrayList<>();
+
 
 
     public Search(SiteRepository siteRepository,
@@ -101,6 +104,7 @@ public class Search {
                 lemmaFinder.collectLemmas(sText);
 
     }
+    /*
 
     public void sortListLemmas() {
         sortedLemmas.clear();
@@ -123,45 +127,49 @@ public class Search {
         }
     }
 
-
+*/
     public void findListPage() {
         Iterator mapIterator = listLemmas4Find.entrySet().iterator();
-        List<String> listFindLemmas = new ArrayList<>();
+       // List<String> listFindLemmas = new ArrayList<>();
         while (mapIterator.hasNext()) {
             Map.Entry<String, Integer> entry = (Map.Entry<String, Integer>) mapIterator.next();
             // заполнение массива леммами
             String lemma = entry.getKey();
             Integer iLemmas = entry.getValue();
-            listFindLemmas.add(lemma);
+            listFindLemmas.add(lemma); // lemmas array
 
         }
 
         //   var listLemmasFind = lemmaRepository.findBylemma(lemma);
-
+/*
         if (listFindLemmas.size() == 1) {
             List<Lemma> lemmas = lemmaRepository.findBylemma(listFindLemmas.get(0));
             Lemma l = lemmas.get(0);
             indexList = indexRepository.findBylemma_id(l.getId()); //list page
-        } else {   // string query and query
+        } else {
+
+ */
+           // string query and query
             String stringQuery = "";
             String s = "";
             int num = 0;
             //   ArrayList<Integer> listLemmasIndex = new ArrayList<Integer>();
-            String sQ = "select *  FROM search_engine.index WHERE page_id IN";
-            for (var nameLemma : listFindLemmas) {
+            String sQ = "select DISTINCT page_id FROM search_engine.index WHERE page_id IN ";
+            for (var nameLemma : listFindLemmas) {   // перебираем все слова из строки запроса
                 List<Lemma> lemmas = lemmaRepository.findBylemma(nameLemma);
-                if (lemmas.size() == 1) {
+                  // добавить фильтр для сайтов
+
+
                     int indexLemma = lemmas.get(0).getId();
                     if (num == 0) {
-                        sQ = sQ + "(SELECT page_id FROM search_engine.index where lemma_id =" + indexLemma + ")";
+                        sQ = sQ + "(SELECT  page_id FROM search_engine.index where lemma_id =" + indexLemma + ")";
                     } else {
                         sQ = sQ + "and page_id IN (SELECT page_id FROM search_engine.index where lemma_id = " + indexLemma + ")";
                     }
                     ;
-                }
                 num++;
                 //       listLemmasIndex.add(lemmas.get(0).getId());
-            }
+            }    // перебираем все слова из строки запроса
 
 
             sQ = sQ + ";";
@@ -172,7 +180,7 @@ public class Search {
             SQLClass sqlClass = new SQLClass(siteRepository,pageRepository,lemmaRepository,indexRepository);
             indexList =  sqlClass.query(sQ);
 
-        }
+       //}
 
     }
 
@@ -189,30 +197,37 @@ public class Search {
         JSONArray datas = new JSONArray();
         datas.clear();
 
-        for (var page : indexList) {
-            strText = page.getPage().getContent().toString();
-            title = page.getPage().getTitlepage().toString();
-            uri = page.getPage().getPath().toString();
+        for (Integer id_page : indexList) {
+            // Long l_id_page = Long.valueOf(id_page);
+            int i = id_page;
+            Page page = pageRepository.findById(i).get();
 
-            site = page.getPage().getSite().getUrl().toString();
-            siteName = page.getPage().getSite().getName().toString();
+            strText = page.getContent().toString();
+            title = page.getTitlepage().toString();
+            uri = page.getPath().toString();
 
-            JSONObject data = new JSONObject();
-            data.put("site", site);
-            data.put("siteName", siteName);
-            data.put("uri", uri);
-            data.put("title", title);
+            site = page.getSite().getUrl().toString();
+            siteName = page.getSite().getName().toString();
+
+            for (var strFind : listFindLemmas) {
+
+                JSONObject data = new JSONObject();
+                data.put("site", site);
+                 data.put("siteName", siteName);
+                 data.put("uri", uri);
+                 data.put("title", title);
             // data.put(  "snippet", "Фрагмент текста,в котором найдены совпадения, <b>"+sQuery+"</b>\n"+ str);
-            String s = serchStrigOut(strText);
+                String s = serchStrigOut(strText, strFind);
             data.put("snippet", s);
             data.put("relevance", 0.93362);
             datas.put(data);
+            }
 
         }
         return datas;
     }
 
-    public String serchStrigOut(String text) throws IOException {
+    public String serchStrigOut(String text, String strFind) throws IOException {
 
 
         LuceneMorphology luceneMorph =
@@ -222,7 +237,7 @@ public class Search {
 
         //    System.out.println(lemmaFinder.getLemmaSet(sQuery).toString());
         // String wordSearch = lemmaFinder.getLemmaSet(sQuery).toString();
-        String wordSearch = sQuery;
+        String wordSearch = strFind;
 
 
         String stringOut = "";

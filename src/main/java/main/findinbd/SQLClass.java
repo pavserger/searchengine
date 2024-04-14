@@ -33,10 +33,10 @@ public class SQLClass {
         this.indexRepository = indexRepository;
     }
 
-    private List<Index> indexList;
+    private List<Integer> indexList =  new ArrayList<Integer>();
     private Index index;
 
-    public List <Index>  query(String sQ) {
+    public List<Integer> query(String sQ) {
 
 
         DataProcessing dataProcessing = new DataProcessing();
@@ -52,20 +52,24 @@ public class SQLClass {
             Connection connection = DriverManager.getConnection(url, usr, pass);
             Statement statement = connection.createStatement();
             String query = sQ;
-            //     String q2 = "SELECT course_name, MONTH(subscription_date) as month, COUNT(*) AS num_clients FROM purchaselist group by course_name, MONTH(subscription_date);";
             ResultSet resultQury = statement.executeQuery(query);
-            resultQury.next();
-            var id = resultQury.getInt("id");
-            var rank = resultQury.getInt("rank");
-            var lemma_id = resultQury.getInt("lemma_id");
-            var page_id = resultQury.getInt("page_id");
+          //  resultQury.next();
             System.out.println("SQLClass");
 
-            indexList = new ArrayList<>();
+           // indexList = new ArrayList<Integer>();
 
             while (resultQury.next()) {
+                var id = resultQury.getInt("page_id");
+
+                indexList.add(id);
+/*
+                var rank = resultQury.getInt("rank");
+                var lemma_id = resultQury.getInt("lemma_id");
+                var page_id = resultQury.getInt("page_id");
+
                 System.out.println(id+" !  "+rank+" !  "+ lemma_id+"!"+ page_id );
                // pageList.add(new Integer(page_id));
+
                 index = new Index();
                 index.setId(id);
                 index.setRank(rank);
@@ -77,8 +81,8 @@ public class SQLClass {
                // long l2 = lemma_id;
                 var listLemmasFind = lemmaRepository.findById(lemma_id);
                 index.setLemma(listLemmasFind.get());
-
-                indexList.add(index);
+*/
+        //        indexList.add(id);
 
             }
 
