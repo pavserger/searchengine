@@ -125,10 +125,21 @@ public class SiteController {
 */
         GetStatistics getStatistics = new GetStatistics(siteRepository,pageRepository,
                 lemmaRepository,indexRepository);
+
+        //getConfig();
+
+
+        siteRepository.deleteAll();
+        pageRepository.deleteAll();
+        lemmaRepository.deleteAll();
+        indexRepository.deleteAll();
+
         dataProcessing.sinchronData();
 
         IndexSites indexSites = new IndexSites(siteRepository, pageRepository,
                lemmaRepository, indexRepository);
+
+        //dataProcessing.sinchronData();
 
         indexSites.findPage("all");
         indexSites.findLemmas("all");
@@ -153,6 +164,7 @@ public class SiteController {
     @PostMapping("/api/indexPage")
     public String indexPage(@RequestParam(required = true) String url) throws IOException {
         JSONObject result = new JSONObject();
+        //String s = getConfig();
         if (dataProcessing.conainUrlConfig(url))   {
             dataProcessing.updateSite(url);
             result.put("result",true);
@@ -162,8 +174,8 @@ public class SiteController {
             // GetStatistics getStatistics = new GetStatistics(siteRepository,pageRepository,
             //         lemmaRepository,indexRepository);
             //          getStatistics.sinchronData( testSites);
-            //indexSites.findPage(url);
-            indexSites.findLemmas("all");
+            indexSites.findPage(url);
+            indexSites.findLemmas (url);
 
 
         }else {

@@ -218,9 +218,9 @@ public class Search {
                  data.put("title", title);
             // data.put(  "snippet", "Фрагмент текста,в котором найдены совпадения, <b>"+sQuery+"</b>\n"+ str);
                 String s = serchStrigOut(strText, strFind);
-            data.put("snippet", s);
-            data.put("relevance", 0.93362);
-            datas.put(data);
+                data.put("snippet", s);
+                data.put("relevance", 0.93362);
+                datas.put(data);
             }
 
         }
