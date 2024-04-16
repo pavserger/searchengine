@@ -62,12 +62,17 @@ public class SQLClass {
                 var id = resultQury.getInt("page_id");
 
                 indexList.add(id);
+                System.out.println("page_id =  "  +  id );
+
+
 /*
                 var rank = resultQury.getInt("rank");
                 var lemma_id = resultQury.getInt("lemma_id");
                 var page_id = resultQury.getInt("page_id");
 
                 System.out.println(id+" !  "+rank+" !  "+ lemma_id+"!"+ page_id );
+
+
                // pageList.add(new Integer(page_id));
 
                 index = new Index();

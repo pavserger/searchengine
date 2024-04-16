@@ -16,7 +16,7 @@ import java.util.concurrent.RecursiveTask;
 public class FindLemmsInPage extends RecursiveTask<String> {
     private static SiteRepository siteRepository;
     private static PageRepository pageRepository;
-    protected static  LemmaRepository lemmaRepository ;
+    protected static LemmaRepository lemmaRepository ;
     protected static IndexRepository indexRepository;
 
     private DataProcessing dataProcessing;
@@ -37,6 +37,11 @@ public class FindLemmsInPage extends RecursiveTask<String> {
     String url;
 
     int iPage = 0;
+
+    private  static  List<Lemma> lemmas;
+    private  static  List<Lemma> lemmas2;
+
+    private  static  Lemma lemma;
 
 
     //  private CopyOnWriteArraySet<Page> allLinks;//список всех ссылок
@@ -65,7 +70,7 @@ public class FindLemmsInPage extends RecursiveTask<String> {
     }
 
 
-    public FindLemmsInPage(List <Page> listPage, Site site, SiteRepository siteRepository, PageRepository pageRepository,
+    private  FindLemmsInPage(List <Page> listPage, Site site, SiteRepository siteRepository, PageRepository pageRepository,
                            LemmaRepository lemmaRepository, IndexRepository indexRepository)
      throws IOException {
 
@@ -139,7 +144,9 @@ public class FindLemmsInPage extends RecursiveTask<String> {
        return  "";
     }
 
-    private  synchronized  void writeLemms(Site site, Page page) throws IOException {
+    private static synchronized void writeLemms(Site site, Page page) throws IOException {
+
+
         LuceneMorphology luceneMorph =
                 new RussianLuceneMorphology();
         LemmaFinder lemmaFinder = new LemmaFinder(luceneMorph);
@@ -164,9 +171,9 @@ public class FindLemmsInPage extends RecursiveTask<String> {
 
 
             if (sKey.length() >= 2) {
-                List<Lemma> lemmas = lemmaRepository.findBylemma(sKey); // будет заполняться
+                lemmas = lemmaRepository.findBylemma(sKey); // будет заполняться
                 lemmas.clear();
-                List<Lemma> lemmas2 = lemmaRepository.findBylemma(sKey);
+                lemmas2 = lemmaRepository.findBylemma(sKey);
 
 
                 for (Lemma lem : lemmas2) {                // site
@@ -177,7 +184,8 @@ public class FindLemmsInPage extends RecursiveTask<String> {
 
 
                 if (lemmas.isEmpty()) {              // the  lemma is no present
-                    Lemma lemma = new Lemma();
+
+                    lemma = new Lemma();
 
                     lemma.setSite(site);
                     lemma.setLemma(sKey);
@@ -211,56 +219,7 @@ public class FindLemmsInPage extends RecursiveTask<String> {
                 }
 
             } // key > 2
-              /*
-                // int num = entry.getValue();
 
-                List<Lemma> lemmas = lemmaRepository.findBylemma(sKey); // будет заполняться
-                lemmas.clear();
-                List<Lemma> lemmas2 = lemmaRepository.findBylemma(sKey);
-
-
-                for (Lemma lem : lemmas2) {
-                    if (lem.getSite().getId() == iSite) {
-                        lemmas.add(lem);
-                    }
-                }
-
-                if (lemmas.isEmpty()) {              // the  lemma is no present
-                    Lemma lemma = new Lemma();
-
-                    lemma.setSite(site);
-                    lemma.setLemma(sKey);
-                    lemma.setFrequency(iLemms);
-                    lemmaRepository.save(lemma);
-
-                    Index index = new Index();
-                    index.setLemma(lemma);
-                    float f = entry.getValue();
-                    index.setRank(f);
-                    index.setPage(page);
-
-                    indexRepository.save(index);
-
-
-                } else {
-
-                    for (Lemma lem2 : lemmas) {  // the  lemma is present
-                        int fr = lem2.getFrequency() + iLemms;
-                        lem2.setFrequency(fr);
-                        lemmaRepository.save(lem2);
-
-                        Index index = new Index();
-                        index.setLemma(lem2);
-                        float f = entry.getValue();
-                        index.setRank(f);
-                        index.setPage(page);
-
-                        indexRepository.save(index);
-
-                    }
-                }
-
-                 */
             } // sKey > 2
         }
 

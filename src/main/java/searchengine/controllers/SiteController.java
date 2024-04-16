@@ -195,9 +195,22 @@ public class SiteController {
         Search search = new Search(siteRepository, pageRepository,
                 lemmaRepository, indexRepository);
         String result = "";
-        for (var findSite : siteRepository.findAll() ) {
-            Long iSite = findSite.getId();
-          result = search.serchLemmas(query,iSite);
+        var listSites = siteRepository.findAll();
+
+
+        Long lSite = 0L;
+        if (!site.isEmpty()) {
+            for (var testSite : listSites) {
+                if (testSite.getName().contains(site)) {
+                    lSite = testSite.getId();
+                }
+            }
+            result = search.serchLemmas(query, lSite);
+        } else {
+            for (var findSite : siteRepository.findAll()) {
+                Long iSite = findSite.getId();
+                result = search.serchLemmas(query, iSite);
+            }
         }
 
         return result;

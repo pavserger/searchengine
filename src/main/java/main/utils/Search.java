@@ -104,32 +104,10 @@ public class Search {
                 lemmaFinder.collectLemmas(sText);
 
     }
-    /*
 
-    public void sortListLemmas() {
-        sortedLemmas.clear();
-
-        Iterator mapIterator = listLemmas4Find.entrySet().iterator();
-
-        while (mapIterator.hasNext()) {
-            Map.Entry<String, Integer> entry = (Map.Entry<String, Integer>) mapIterator.next();
-            // заполнение массива лемм
-            String lemma = entry.getKey();
-            Integer iLemmas = entry.getValue();
-
-            var listLemmasFind = lemmaRepository.findBylemma(lemma);
-
-            for (var lemmaFind : listLemmasFind) {
-                if (siteID.equals(lemmaFind.getSite().getId())) {
-                    sortedLemmas.put(lemmaFind.getFrequency(), lemmaFind.getLemma());
-                }
-            }
-        }
-    }
-
-*/
     public void findListPage() {
         Iterator mapIterator = listLemmas4Find.entrySet().iterator();
+        listFindLemmas.clear();
        // List<String> listFindLemmas = new ArrayList<>();
         while (mapIterator.hasNext()) {
             Map.Entry<String, Integer> entry = (Map.Entry<String, Integer>) mapIterator.next();
@@ -150,21 +128,25 @@ public class Search {
 
  */
            // string query and query
-            String stringQuery = "";
+            String sQ = "";
             String s = "";
             int num = 0;
             //   ArrayList<Integer> listLemmasIndex = new ArrayList<Integer>();
-            String sQ = "select DISTINCT page_id FROM search_engine.index WHERE page_id IN ";
+            sQ = "select DISTINCT page_id FROM search_engine.index WHERE page_id IN ";
             for (var nameLemma : listFindLemmas) {   // перебираем все слова из строки запроса
                 List<Lemma> lemmas = lemmaRepository.findBylemma(nameLemma);
                   // добавить фильтр для сайтов
 
 
                     int indexLemma = lemmas.get(0).getId();
+                    Long idSite = lemmas.get(0).getSite().getId();
+
+
                     if (num == 0) {
                         sQ = sQ + "(SELECT  page_id FROM search_engine.index where lemma_id =" + indexLemma + ")";
                     } else {
-                        sQ = sQ + "and page_id IN (SELECT page_id FROM search_engine.index where lemma_id = " + indexLemma + ")";
+                        sQ = sQ + "and page_id IN " +
+                                "(SELECT page_id FROM search_engine.index where lemma_id = " + indexLemma + ")";
                     }
                     ;
                 num++;
@@ -179,6 +161,8 @@ public class Search {
 
             SQLClass sqlClass = new SQLClass(siteRepository,pageRepository,lemmaRepository,indexRepository);
             indexList =  sqlClass.query(sQ);
+
+
 
        //}
 
@@ -205,23 +189,27 @@ public class Search {
             strText = page.getContent().toString();
             title = page.getTitlepage().toString();
             uri = page.getPath().toString();
+            Long idSitePage = page.getSite().getId();
 
             site = page.getSite().getUrl().toString();
             siteName = page.getSite().getName().toString();
 
-            for (var strFind : listFindLemmas) {
+            //   if (idSitePage == siteID) {
 
-                JSONObject data = new JSONObject();
-                data.put("site", site);
-                 data.put("siteName", siteName);
-                 data.put("uri", uri);
-                 data.put("title", title);
-            // data.put(  "snippet", "Фрагмент текста,в котором найдены совпадения, <b>"+sQuery+"</b>\n"+ str);
-                String s = serchStrigOut(strText, strFind);
-                data.put("snippet", s);
-                data.put("relevance", 0.93362);
-                datas.put(data);
-            }
+                for (var strFind : listFindLemmas) {
+
+                    JSONObject data = new JSONObject();
+                    data.put("site", site);
+                    data.put("siteName", siteName);
+                    data.put("uri", uri);
+                    data.put("title", title);
+                    // data.put(  "snippet", "Фрагмент текста,в котором найдены совпадения, <b>"+sQuery+"</b>\n"+ str);
+                    String s = serchStrigOut(strText, strFind);
+                    data.put("snippet", s);
+                    data.put("relevance", 0.93362);
+                    datas.put(data);
+                }
+            //}
 
         }
         return datas;
