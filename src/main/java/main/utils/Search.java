@@ -32,6 +32,10 @@ public class Search {
 
     private Map<String, Integer> orderLemmas = new HashMap<String, Integer>();       //  orderLemmas
 
+
+    private  static  JSONArray datas = new JSONArray();
+
+
     private Long siteID;
 
     private List<Integer> indexList;
@@ -53,6 +57,13 @@ public class Search {
         this.indexRepository = indexRepository;
 
     }
+
+
+    public void datasClear() {
+        datas.clear();
+    }
+
+
 
     public String serchLemmas(String sQuery, Long iSite) throws IOException {
 
@@ -117,16 +128,6 @@ public class Search {
             listFindLemmas.add(lemma); // lemmas array
 
         }
-
-        //   var listLemmasFind = lemmaRepository.findBylemma(lemma);
-/*
-        if (listFindLemmas.size() == 1) {
-            List<Lemma> lemmas = lemmaRepository.findBylemma(listFindLemmas.get(0));
-            Lemma l = lemmas.get(0);
-            indexList = indexRepository.findBylemma_id(l.getId()); //list page
-        } else {
-
- */
            // string query and query
             String sQ = "";
             String s = "";
@@ -135,8 +136,8 @@ public class Search {
             sQ = "select DISTINCT page_id FROM search_engine.index WHERE page_id IN ";
             for (var nameLemma : listFindLemmas) {   // перебираем все слова из строки запроса
                 List<Lemma> lemmas = lemmaRepository.findBylemma(nameLemma);
-                  // добавить фильтр для сайтов
-
+                 if (lemmas.isEmpty()) {break;}
+                    // добавить фильтр для сайтов
 
                     int indexLemma = lemmas.get(0).getId();
                     Long idSite = lemmas.get(0).getSite().getId();
@@ -149,22 +150,18 @@ public class Search {
                                 "(SELECT page_id FROM search_engine.index where lemma_id = " + indexLemma + ")";
                     }
                     ;
-                num++;
-                //       listLemmasIndex.add(lemmas.get(0).getId());
-            }    // перебираем все слова из строки запроса
+                    num++;
+                    //       listLemmasIndex.add(lemmas.get(0).getId());
+                     }    // перебираем все слова из строки запроса
 
 
-            sQ = sQ + ";";
+                     sQ = sQ + ";";
 
-            //   indexList = indexRepository.retrieveMultipleRecords();
-            System.out.println("Search:    " + sQ);
+                      System.out.println("Search: " + sQ);
 
-            SQLClass sqlClass = new SQLClass(siteRepository,pageRepository,lemmaRepository,indexRepository);
-            indexList =  sqlClass.query(sQ);
+                     SQLClass sqlClass = new SQLClass(siteRepository, pageRepository, lemmaRepository, indexRepository);
+                     indexList = sqlClass.query(sQ);
 
-
-
-       //}
 
     }
 
@@ -178,8 +175,6 @@ public class Search {
         String site = "";
         String siteName = "";
 
-        JSONArray datas = new JSONArray();
-        datas.clear();
 
         for (Integer id_page : indexList) {
             // Long l_id_page = Long.valueOf(id_page);
@@ -194,7 +189,7 @@ public class Search {
             site = page.getSite().getUrl().toString();
             siteName = page.getSite().getName().toString();
 
-            //   if (idSitePage == siteID) {
+               if (idSitePage == siteID) {
 
                 for (var strFind : listFindLemmas) {
 
@@ -209,7 +204,7 @@ public class Search {
                     data.put("relevance", 0.93362);
                     datas.put(data);
                 }
-            //}
+            }
 
         }
         return datas;

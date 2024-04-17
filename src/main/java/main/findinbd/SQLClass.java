@@ -65,30 +65,6 @@ public class SQLClass {
                 System.out.println("page_id =  "  +  id );
 
 
-/*
-                var rank = resultQury.getInt("rank");
-                var lemma_id = resultQury.getInt("lemma_id");
-                var page_id = resultQury.getInt("page_id");
-
-                System.out.println(id+" !  "+rank+" !  "+ lemma_id+"!"+ page_id );
-
-
-               // pageList.add(new Integer(page_id));
-
-                index = new Index();
-                index.setId(id);
-                index.setRank(rank);
-
-               // long l = page_id;
-                var listPageFind = pageRepository.findById(page_id);
-                index.setPage(listPageFind.get());
-
-               // long l2 = lemma_id;
-                var listLemmasFind = lemmaRepository.findById(lemma_id);
-                index.setLemma(listLemmasFind.get());
-*/
-        //        indexList.add(id);
-
             }
 
 
