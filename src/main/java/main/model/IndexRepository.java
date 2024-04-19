@@ -21,6 +21,11 @@ public interface IndexRepository extends JpaRepository<Index, Long> {
     List<Index> findBylemma_id(int lemma_id);
 
     List<Index> findByPage_id(int  page_id);
+
+
+    @Query(value = "SELECT sum(search_engine.index.rank) as sum_rank  FROM search_engine.index where page_id = :l", nativeQuery = true)
+    float SumPage (int l);
+
 }
 
 

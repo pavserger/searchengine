@@ -19,12 +19,19 @@ import java.util.Map;
         public static String password;
         public static String url;
 
-    private SiteRepository siteRepository;
-    private PageRepository pageRepository;
+    private  SiteRepository siteRepository;
+    private  PageRepository pageRepository;
     private LemmaRepository lemmaRepository;
-    private IndexRepository indexRepository;
+    private  IndexRepository indexRepository;
 
-    private HashMap<String, String> sites;
+    public List <Index> listIndexInPage;
+
+     public List<Index> getListIndexInPage(int i) {
+         listIndexInPage = indexRepository.findByPage_id(i);
+         return listIndexInPage;
+     }
+
+     private HashMap<String, String> sites;
 
     Map<String, String> testSites = new HashMap<String, String>(); //  load list sites from application.yaml
 
@@ -34,7 +41,9 @@ import java.util.Map;
          this.url = url;
 
      };
-    public DataProcessing(SiteRepository siteRepository,
+
+
+     public DataProcessing(SiteRepository siteRepository,
                           PageRepository pageRepository,
                           LemmaRepository lemmaRepository,
                           IndexRepository indexRepository) {
@@ -44,7 +53,10 @@ import java.util.Map;
         this.lemmaRepository = lemmaRepository;
         this.indexRepository = indexRepository;
 
-    }
+    };
+     public DataProcessing (String s) {
+
+     };
 
 
      public void sinchronData() {

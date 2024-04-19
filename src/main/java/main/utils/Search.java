@@ -175,11 +175,22 @@ public class Search {
         String site = "";
         String siteName = "";
 
+        RankCalcSort rankCalcSort = new RankCalcSort(siteRepository, pageRepository,
+                lemmaRepository, indexRepository);
+
+        rankCalcSort.setNumPageList(indexList);
+        rankCalcSort.fillingRankPageList();
+        indexList = rankCalcSort.getNumPageList();
+
+
+
 
         for (Integer id_page : indexList) {
             // Long l_id_page = Long.valueOf(id_page);
             int i = id_page;
             Page page = pageRepository.findById(i).get();
+
+
 
             strText = page.getContent().toString();
             title = page.getTitlepage().toString();
