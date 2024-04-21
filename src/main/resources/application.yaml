@@ -16,11 +16,6 @@ spring:
     show-sql: false
 indexing-settings:
   sites:
-    - url: https://www.lutherancathedral.ru/
-      name: Нет соединения
     - url: https://dombulgakova.ru/
       name: Булгаковский Дом - Новости
-    - url: https://www.svetlovka.ru/
-      name: Центральная городская бибилиотека им. М.А.Светлова
-    - url: https://et-cetera.ru/mobile/
-      name: МОСКОВСКИЙ ТЕАТР «ET CETERA»
+

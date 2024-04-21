@@ -27,7 +27,9 @@ public class RankCalcSort {
 
 
     private List<Integer> numPageList = new ArrayList<>();  // number page for work
-    SortedMap <Integer,Integer> sortPageList = new TreeMap<>();
+   // private SortedMap <Integer,Integer> sortPageList = new TreeMap<>();
+     private List <Rank> sortRank = new ArrayList<>();
+
     public List<Integer> getNumPageList() {
         return numPageList;
     }
@@ -62,11 +64,14 @@ public class RankCalcSort {
             float f = indexRepository.SumPage(i);
             System.out.println("summa = "+f);
             iSum = (int) f;
-            sortPageList.put(iSum,i);
+            Rank rank = new Rank(iSum,i,0.7);
+            sortRank.add(rank);
         }
+
+        Collections.sort(sortRank);
         System.out.println("fillingRankPageList");
-        System.out.println("Size " + sortPageList.size());
-        System.out.println("Max lemmas in page " + sortPageList.get(sortPageList.size()-1));
+        System.out.println("Size " + sortRank.size());
+        System.out.println("Max lemmas in page " + sortRank.get(sortRank.size()-1));
 
 
     }
