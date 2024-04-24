@@ -58,13 +58,13 @@ public class FindLemmsInPage extends RecursiveTask<String> {
                 indexRepository);
         this.site = site;
 
-       // Long iSite = site.getId();
+        Long iSite = site.getId();
         //listPage = pageRepository.findBySite_id(iSite);
 
 
             first = true;
 
-            this.listPage = pageRepository.findAll();
+            this.listPage = pageRepository.findBySite_id(iSite);
 
 
     }

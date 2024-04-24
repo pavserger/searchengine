@@ -24,7 +24,17 @@ import java.util.Map;
     private LemmaRepository lemmaRepository;
     private  IndexRepository indexRepository;
 
-    public List <Index> listIndexInPage;
+     private static boolean stopStopIndexing = false;
+
+     public static void setStopStopIndexing(boolean stopStopIndexing) {
+         DataProcessing.stopStopIndexing = stopStopIndexing;
+     }
+
+     public boolean isStopStopIndexing() {
+         return stopStopIndexing;
+     }
+
+     public List <Index> listIndexInPage;
 
      public List<Index> getListIndexInPage(int i) {
          listIndexInPage = indexRepository.findByPage_id(i);
@@ -41,6 +51,9 @@ import java.util.Map;
          this.url = url;
 
      };
+     public DataProcessing (Boolean stopStopIndexing) {
+         this.stopStopIndexing = stopStopIndexing;
+     }
 
 
      public DataProcessing(SiteRepository siteRepository,

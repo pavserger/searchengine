@@ -44,6 +44,8 @@ public class Search {
 
     List<String> listFindLemmas = new ArrayList<>();
 
+    private List <Rank> sortRank = new ArrayList<>();
+
 
 
     public Search(SiteRepository siteRepository,
@@ -180,14 +182,16 @@ public class Search {
 
         rankCalcSort.setNumPageList(indexList);
         rankCalcSort.fillingRankPageList();
-        indexList = rankCalcSort.getNumPageList();
+     //   indexList = rankCalcSort.getNumPageList();
+
+        sortRank = rankCalcSort.getSortRank();
 
 
 
 
-        for (Integer id_page : indexList) {
+        for (Rank id_rank : sortRank) {
             // Long l_id_page = Long.valueOf(id_page);
-            int i = id_page;
+            int  i =  (int)id_rank.numPage;
             Page page = pageRepository.findById(i).get();
 
 
@@ -212,7 +216,7 @@ public class Search {
                     // data.put(  "snippet", "Фрагмент текста,в котором найдены совпадения, <b>"+sQuery+"</b>\n"+ str);
                     String s = serchStrigOut(strText, strFind);
                     data.put("snippet", s);
-                    data.put("relevance", 0.93362);
+                    data.put("relevance", id_rank.relRange);
                     datas.put(data);
                 }
             }

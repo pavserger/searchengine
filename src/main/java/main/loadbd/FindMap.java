@@ -2,6 +2,7 @@ package main.loadbd;//import org.apache.commons.lang3.StringUtils;
 import main.model.Page;
 import main.model.PageRepository;
 import main.model.Site;
+import main.utils.DataProcessing;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -29,6 +30,8 @@ public class FindMap extends RecursiveTask<String> {
     private PageRepository pageRepository;
     Page pageRecord;
 
+    private DataProcessing dataProcessing = new DataProcessing(false);
+
     private CopyOnWriteArraySet<String> allLinks;//список всех ссылок
 
     public FindMap(Site site, PageRepository pageRepository) {//инициализируем новый список
@@ -39,6 +42,9 @@ public class FindMap extends RecursiveTask<String> {
         this.allLinks.add(url);
         this.pageRecord = new Page();
 
+      //  this.dataProcessing = new DataProcessing(false);
+
+
     }
     public FindMap(Site site ,String url, PageRepository pageRepository, CopyOnWriteArraySet<String> allLinks) {//инициализируем новый список
         this.site = site;
@@ -47,7 +53,7 @@ public class FindMap extends RecursiveTask<String> {
         this.pageRepository = pageRepository;
         this.url = url;
      //   this.pageRecord = new Page();
-
+      //  this.dataProcessing = new DataProcessing(false);
     }
 
 
@@ -59,8 +65,13 @@ public class FindMap extends RecursiveTask<String> {
         StringBuilder stringBuilder = new StringBuilder(tabulate + url + "\n");
         Set<FindMap> allTask = new TreeSet<>(Comparator.comparing(o -> o.url));
 
+
+
         try {
             Thread.sleep(200);//чтобы не заблокировали
+            if (dataProcessing.isStopStopIndexing()) {
+                Thread.interrupted();
+            }
             pageRecord = new Page();
             pageRecord.setSite(site);
             //url = site.getUrl();
@@ -102,7 +113,7 @@ public class FindMap extends RecursiveTask<String> {
                     allLinks.add(attributeUrl);
                 }
             }
-        } catch (InterruptedException | IOException e) {
+        } catch (InterruptedException | IOException   e) {
             e.printStackTrace();
            // System.out.println(url);
             String sOut = "Ошибка !!  " + e.toString() + " " + url;

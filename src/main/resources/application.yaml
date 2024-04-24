@@ -18,4 +18,5 @@ indexing-settings:
   sites:
     - url: https://dombulgakova.ru/
       name: Булгаковский Дом - Новости
-
+    - url: https://et-cetera.ru/mobile/
+      name: МОСКОВСКИЙ ТЕАТР «ET CETERA»

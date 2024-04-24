@@ -1,8 +1,11 @@
 package main.utils;
 
+import lombok.Data;
 import main.model.*;
 
 import java.util.*;
+
+@Data
 
 public class RankCalcSort {
     private SiteRepository siteRepository;
@@ -29,6 +32,10 @@ public class RankCalcSort {
     private List<Integer> numPageList = new ArrayList<>();  // number page for work
    // private SortedMap <Integer,Integer> sortPageList = new TreeMap<>();
      private List <Rank> sortRank = new ArrayList<>();
+
+    public List<Rank> getSortRank() {
+        return sortRank;
+    }
 
     public List<Integer> getNumPageList() {
         return numPageList;
@@ -64,16 +71,28 @@ public class RankCalcSort {
             float f = indexRepository.SumPage(i);
             System.out.println("summa = "+f);
             iSum = (int) f;
-            Rank rank = new Rank(iSum,i,0.7);
+            Rank rank = new Rank(i,iSum,0.7);
             sortRank.add(rank);
         }
 
         Collections.sort(sortRank);
-        System.out.println("fillingRankPageList");
-        System.out.println("Size " + sortRank.size());
-        System.out.println("Max lemmas in page " + sortRank.get(sortRank.size()-1));
+     //   System.out.println("fillingRankPageList");
+     //   System.out.println("Size " + sortRank.size());
+     //   System.out.println("Max lemmas in page " + sortRank.get(sortRank.size()-1));
+
+        int maxPageLemmas = sortRank.get(sortRank.size()-1).absRange;
+
+        for ( int i  = 0; i < sortRank.size(); i++ ){
+            double d = sortRank.get(i).absRange/maxPageLemmas;
+            sortRank.get(i).setRelRange(d);
+        }
+
+        for ( int i  = 0; i < sortRank.size(); i++ ){
+            System.out.println (" sort "+ sortRank.get(i));
+        }
 
 
-    }
+
+        }
 
 }
