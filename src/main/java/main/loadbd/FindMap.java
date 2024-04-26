@@ -69,9 +69,13 @@ public class FindMap extends RecursiveTask<String> {
 
         try {
             Thread.sleep(200);//чтобы не заблокировали
+          /*
+
             if (dataProcessing.isStopStopIndexing()) {
                 Thread.interrupted();
             }
+
+           */
             pageRecord = new Page();
             pageRecord.setSite(site);
             //url = site.getUrl();
@@ -107,10 +111,14 @@ public class FindMap extends RecursiveTask<String> {
                 {
 
                  //   site.setUrl(attributeUrl);
-                    FindMap links = new FindMap(site, attributeUrl,  pageRepository, allLinks);
+                    if (!dataProcessing.isStopStopIndexing()) {
+
+                    FindMap links = new FindMap(site, attributeUrl, pageRepository, allLinks);
+
                     links.fork();
                     allTask.add(links);
                     allLinks.add(attributeUrl);
+                }
                 }
             }
         } catch (InterruptedException | IOException   e) {

@@ -26,7 +26,7 @@ import java.util.Map;
 
      private static boolean stopStopIndexing = false;
 
-     public static void setStopStopIndexing(boolean stopStopIndexing) {
+     public  void setStopStopIndexing(boolean stopStopIndexing) {
          DataProcessing.stopStopIndexing = stopStopIndexing;
      }
 
@@ -51,8 +51,8 @@ import java.util.Map;
          this.url = url;
 
      };
-     public DataProcessing (Boolean stopStopIndexing) {
-         this.stopStopIndexing = stopStopIndexing;
+     public DataProcessing (Boolean stop) {
+         this.stopStopIndexing = false;
      }
 
 

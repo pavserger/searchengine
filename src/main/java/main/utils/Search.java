@@ -23,6 +23,8 @@ public class Search {
     private LemmaRepository lemmaRepository;
     private IndexRepository indexRepository;
 
+    private int NUM_Return = 3;
+
     private HashMap<String, String> sites;
     Map<String, String> testSites = new HashMap<String, String>(); //  load list sites from application.yaml
 
@@ -37,6 +39,8 @@ public class Search {
 
 
     private Long siteID;
+
+    int numLemmas = 0;
 
     private List<Integer> indexList;
 
@@ -73,15 +77,19 @@ public class Search {
 
         getListLemmas(sQuery);
 
-        //sortListLemmas();
-
         findListPage();
+
+        if (indexList.isEmpty()) {
+
+            return "NoResult";
+
+        }
 
         //   String resalt =formResult();
 
         List<Lemma> lemmas = lemmaRepository.findBylemma(sQuery);
 
-        int numLemmas = 0;
+        //  int numLemmas = 0;
 
         for (Lemma lemma : lemmas) {
             int lem = lemma.getId();
@@ -170,60 +178,59 @@ public class Search {
 
 //          при наличии других лемм провести пересечение
     public JSONArray formResult() throws IOException {
-        String strText = "";
-        String title = "";
-        String uri = "";
-
-        String site = "";
-        String siteName = "";
-
-        RankCalcSort rankCalcSort = new RankCalcSort(siteRepository, pageRepository,
-                lemmaRepository, indexRepository);
-
-        rankCalcSort.setNumPageList(indexList);
-        rankCalcSort.fillingRankPageList();
-     //   indexList = rankCalcSort.getNumPageList();
-
-        sortRank = rankCalcSort.getSortRank();
 
 
+                String strText = "";
+                String title = "";
+                String uri = "";
+
+                String site = "";
+                String siteName = "";
+
+                RankCalcSort rankCalcSort = new RankCalcSort(siteRepository, pageRepository,
+                        lemmaRepository, indexRepository);
+
+                rankCalcSort.setNumPageList(indexList);
+                rankCalcSort.fillingRankPageList();
+                //   indexList = rankCalcSort.getNumPageList();
+
+                sortRank = rankCalcSort.getSortRank();
+                for (Rank id_rank : sortRank) {
+                    // Long l_id_page = Long.valueOf(id_page);
+                    int i = (int) id_rank.numPage;
+                    Page page = pageRepository.findById(i).get();
 
 
-        for (Rank id_rank : sortRank) {
-            // Long l_id_page = Long.valueOf(id_page);
-            int  i =  (int)id_rank.numPage;
-            Page page = pageRepository.findById(i).get();
+                    strText = page.getContent().toString();
+                    title = page.getTitlepage().toString();
+                    uri = page.getPath().toString();
+                    Long idSitePage = page.getSite().getId();
 
+                    site = page.getSite().getUrl().toString();
+                    siteName = page.getSite().getName().toString();
 
+                    if (idSitePage == siteID) {
 
-            strText = page.getContent().toString();
-            title = page.getTitlepage().toString();
-            uri = page.getPath().toString();
-            Long idSitePage = page.getSite().getId();
+                        for (var strFind : listFindLemmas) {
 
-            site = page.getSite().getUrl().toString();
-            siteName = page.getSite().getName().toString();
+                            numLemmas = listFindLemmas.size();
 
-               if (idSitePage == siteID) {
+                            JSONObject data = new JSONObject();
+                            data.put("site", site);
+                            data.put("siteName", siteName);
+                            data.put("uri", uri);
+                            data.put("title", title);
+                            // data.put(  "snippet", "Фрагмент текста,в котором найдены совпадения, <b>"+sQuery+"</b>\n"+ str);
+                            String s = serchStrigOut(strText, strFind);
+                            data.put("snippet", s);
+                            data.put("relevance", id_rank.relRange);
+                            datas.put(data);
+                        }
+                    }
 
-                for (var strFind : listFindLemmas) {
-
-                    JSONObject data = new JSONObject();
-                    data.put("site", site);
-                    data.put("siteName", siteName);
-                    data.put("uri", uri);
-                    data.put("title", title);
-                    // data.put(  "snippet", "Фрагмент текста,в котором найдены совпадения, <b>"+sQuery+"</b>\n"+ str);
-                    String s = serchStrigOut(strText, strFind);
-                    data.put("snippet", s);
-                    data.put("relevance", id_rank.relRange);
-                    datas.put(data);
                 }
-            }
-
+                return datas;
         }
-        return datas;
-    }
 
     public String serchStrigOut(String text, String strFind) throws IOException {
 

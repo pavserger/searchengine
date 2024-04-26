@@ -56,15 +56,8 @@ public class SiteController {
     private String url;
 
 
-
-
-
-
-
-
-
     //   private LemmaRepository lemmaRepository;
- //   Lemma lemmaRec = new Lemma();
+    //   Lemma lemmaRec = new Lemma();
 
     // Рекомендуемый вариант внедрения зависимости:
     // внедрение зависимости в класс через конструктор
@@ -80,9 +73,11 @@ public class SiteController {
 
         dataProcessing = new DataProcessing(siteRepository,pageRepository,lemmaRepository,indexRepository);
 
+        dataProcessing.setStopStopIndexing(false);
+
         flagIndex = false;
 
-        stopStopIndexing = false;
+    //    stopStopIndexing = false;
 
     }
 
@@ -104,7 +99,7 @@ public class SiteController {
         }
 
         dataProcessing.geCotnfig(testSites);
-
+        dataProcessing.setStopStopIndexing(false);
         dataProcessing.putCotnfig(username,password,url);
 
         return "OK";
@@ -133,10 +128,10 @@ public class SiteController {
         //dataProcessing.sinchronData();
 
         flagIndex = true;
+        if (!dataProcessing.isStopStopIndexing()) {
+            indexSites.findPage("all");
+        }
 
-        stopStopIndexing = false;
-
-        indexSites.findPage("all");
         if (!dataProcessing.isStopStopIndexing()) {
             indexSites.findLemmas("all");
         }
@@ -190,7 +185,9 @@ public class SiteController {
             //          getStatistics.sinchronData( testSites);
 
             flagIndex = true;
-            indexSites.findPage(url);
+            if (!dataProcessing.isStopStopIndexing()) {
+                indexSites.findPage(url);
+            }
 
             if (!dataProcessing.isStopStopIndexing()) {
                 indexSites.findLemmas (url);
@@ -217,6 +214,16 @@ public class SiteController {
                 lemmaRepository, indexRepository);
         String result = "";
 
+
+        if (query.isEmpty()) {
+            JSONObject jsonResul = new JSONObject();
+            jsonResul.put("result",false);
+            jsonResul.put("error","Задан пустой поисковый запрос");
+
+            return jsonResul.toString();
+
+        }
+
         var listSites = siteRepository.findAll();
 
         Long lSite = 0L;
@@ -238,6 +245,16 @@ public class SiteController {
                     result = search.serchLemmas(query, iSite);
                 }
             }
+        }
+
+        // this empty result
+
+        if (result.equals("NoResult")) {
+
+            JSONObject jsonResul = new JSONObject();
+            jsonResul.put("result", false);
+            jsonResul.put("error", "Указанная страницы не найдены");
+            return jsonResul.toString();
         }
 
         return result;
